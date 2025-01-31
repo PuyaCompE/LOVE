@@ -147,7 +147,11 @@ body {
   background-repeat: no-repeat;
   background-position: center;
 }
-
+.calendar-days div.selected-date {
+  background-color: #ffcccc; /* Light red background */
+  border: 2px solid #e74c3c; /* Red border */
+  font-weight: bold; /* Bold text */
+}
 /* Event Details */
 .event-details {
   max-width: 600px;
