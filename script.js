@@ -37,6 +37,12 @@ function renderCalendar() {
   const firstDayOfMonth = new Date(year, month, 1);
   const lastDayOfMonth = new Date(year, month + 1, 0);
 
+  // Get the current date in PST
+  const pstDate = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+  const pstYear = new Date(pstDate).getFullYear();
+  const pstMonth = new Date(pstDate).getMonth() + 1; // Months are zero-indexed
+  const pstDay = new Date(pstDate).getDate();
+
   for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
     const emptyDay = document.createElement("div");
     calendarDays.appendChild(emptyDay);
@@ -50,6 +56,15 @@ function renderCalendar() {
     if (events[dateKey]) {
       dayElement.classList.add("event-day");
       dayElement.title = events[dateKey];
+    }
+
+    // Highlight the current date in PST
+    if (
+      year === pstYear &&
+      month + 1 === pstMonth && // Months are zero-indexed
+      day === pstDay
+    ) {
+      dayElement.classList.add("current-date");
     }
 
     dayElement.addEventListener("click", () => {
