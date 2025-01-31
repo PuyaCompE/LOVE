@@ -1,3 +1,56 @@
+const GITHUB_TOKEN = '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';
+const REPO_OWNER = 'PuyaCompE';
+const REPO_NAME = 'LOVE';
+const EVENTS_FILE_PATH = 'events.json';
+
+let events = {};
+
+// Function to fetch events from GitHub
+async function fetchEvents() {
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${EVENTS_FILE_PATH}`;
+  const response = await fetch(url, {
+    headers: {
+      'Authorization': `token ${GITHUB_TOKEN}`,
+      'Accept': 'application/vnd.github.v3+json'
+    }
+  });
+  const data = await response.json();
+  if (data.content) {
+    events = JSON.parse(atob(data.content));
+  }
+  renderCalendar();
+}
+
+// Function to save events to GitHub
+async function saveEvents() {
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${EVENTS_FILE_PATH}`;
+  const response = await fetch(url, {
+    headers: {
+      'Authorization': `token ${GITHUB_TOKEN}`,
+      'Accept': 'application/vnd.github.v3+json'
+    }
+  });
+  const data = await response.json();
+  const sha = data.sha;
+
+  const content = btoa(JSON.stringify(events));
+  const commitMessage = 'Update events';
+
+  await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `token ${GITHUB_TOKEN}`,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      message: commitMessage,
+      content: content,
+      sha: sha
+    })
+  });
+}
+
 // Existing checkbox logic
 function check() {
   if (
@@ -16,8 +69,6 @@ function check() {
 }
 
 // Calendar functionality
-let events = JSON.parse(localStorage.getItem('events')) || {}; // Load events from localStorage
-
 let currentDate = new Date();
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const calendarDays = document.querySelector(".calendar-days");
@@ -81,10 +132,10 @@ nextMonthButton?.addEventListener("click", () => {
   renderCalendar();
 });
 
-if (calendarDays) renderCalendar();
+if (calendarDays) fetchEvents().then(renderCalendar);
 
 // Event Creation Form
-document.getElementById("event-form")?.addEventListener("submit", (e) => {
+document.getElementById("event-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const eventName = document.getElementById("event-name").value.trim();
   const eventType = document.getElementById("event-type").value;
@@ -97,8 +148,7 @@ document.getElementById("event-form")?.addEventListener("submit", (e) => {
   const dateKey = `${year}-${month}-${day}`;
 
   events[dateKey] = `${eventType.charAt(0).toUpperCase() + eventType.slice(1)}: ${eventName}`;
-  // Save events to localStorage
-  localStorage.setItem('events', JSON.stringify(events));
+  await saveEvents();
 
   renderCalendar();
   // Clear the form
