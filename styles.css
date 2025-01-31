@@ -1,227 +1,215 @@
+/* General Styles */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: 'Cursive', cursive;
-    background-color: #f9e7f7; /* Soft pink background */
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  color: #fff;
+  overflow: hidden;
+  background-color: #ffcccc;
 }
 
-.heart-container {
-    position: relative;
-    width: 400px;
-    height: 400px;
-    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-    background-color: #ffffff; /* White background for the heart */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    margin-bottom: 20px;
-}
-
-.container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    z-index: 2;
+.content {
+  position: relative;
+  z-index: 2;
+  padding: 20px;
 }
 
 h1 {
-    font-size: 2rem;
-    color: #ff6f61; /* Soft red color */
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: #ff4d4d;
 }
 
-.message {
-    font-size: 1.2rem;
-    color: #333;
-    margin-top: 10px;
+.animation-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  margin: 40px auto;
 }
 
-.snoopy {
-    position: relative;
-    width: 100px;
-    margin-top: 20px;
-    animation: float 3s ease-in-out infinite;
+.stickman {
+  position: absolute;
+  left: 50px;
+  bottom: 0;
+  width: 50px;
+  height: 100px;
 }
 
-.snoopy img {
-    width: 100%;
-    border-radius: 50%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.stickman .body {
+  width: 10px;
+  height: 50px;
+  background: #fff;
+  position: absolute;
+  top: 20px;
+  left: 20px;
 }
 
-@keyframes float {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
+.stickman .arm {
+  width: 40px;
+  height: 10px;
+  background: #fff;
+  position: absolute;
+  top: 30px;
+  left: 10px;
+  transform-origin: left center;
+  animation: throw 2s ease-in-out infinite;
 }
 
-.hearts {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: 1;
+.stickman .leg {
+  width: 10px;
+  height: 30px;
+  background: #fff;
+  position: absolute;
+  bottom: 0;
+}
+
+.stickman .left-leg {
+  left: 15px;
+  transform: rotate(10deg);
+}
+
+.stickman .right-leg {
+  left: 25px;
+  transform: rotate(-10deg);
+}
+
+.arrow {
+  position: absolute;
+  left: 70px;
+  bottom: 50px;
+  width: 100px;
+  height: 10px;
+  background: #fff;
+  border-radius: 5px;
+  animation: fly 2s ease-in-out infinite;
 }
 
 .heart {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background-color: red;
-    transform: rotate(-45deg);
-    animation: fall linear infinite;
+  position: absolute;
+  right: 50px;
+  bottom: 50px;
+  width: 50px;
+  height: 50px;
+  background: red;
+  transform: rotate(-45deg);
 }
 
 .heart::before,
 .heart::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background-color: red;
-    border-radius: 50%;
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: red;
+  border-radius: 50%;
 }
 
 .heart::before {
-    top: -10px;
-    left: 0;
+  top: -15px;
+  left: 0;
 }
 
 .heart::after {
-    left: 10px;
-    top: 0;
-}
-
-@keyframes fall {
-    0% {
-        transform: translateY(-10%) translateX(var(--x) * 1vw) rotate(-45deg);
-        opacity: 1;
-    }
-    80% {
-        transform: translateY(70vh) translateX(var(--x) * 1vw) rotate(-45deg);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(80vh) translateX(var(--x) * 1vw) rotate(-45deg);
-        opacity: 0;
-    }
-}
-
-.confetti {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: 1;
-}
-
-.confetti-piece {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background-color: #ff6f61;
-    animation: confetti-fall linear infinite;
-}
-
-@keyframes confetti-fall {
-    0% {
-        transform: translateY(-10%) translateX(var(--x) * 1vw) rotate(0deg);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(110vh) translateX(var(--x) * 1vw) rotate(360deg);
-        opacity: 0;
-    }
+  top: 0;
+  left: 15px;
 }
 
 .timeline {
-    position: relative;
-    width: 80%;
-    max-width: 600px;
-    height: 50px;
-    background-color: #ffffff;
-    border-radius: 25px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    display: flex;
-    align-items: center;
+  margin-top: 40px;
 }
 
-.timeline-arrow {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: linear-gradient(to right, #ff6f61, #ffafcc, #ffc3a0, #ffcc5c, #88d8b0);
-    animation: timeline-animation 5s linear infinite;
+.timeline h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #ff4d4d;
 }
 
-@keyframes timeline-animation {
-    0% {
-        transform: translateX(-100%);
-    }
-    100% {
-        transform: translateX(0);
-    }
+.timeline ul {
+  list-style: none;
 }
 
-.timeline-milestone {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background-color: #ffffff;
-    border: 2px solid #ff6f61;
-    border-radius: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    color: #ff6f61;
-    z-index: 2;
-    transform: translateX(calc(var(--position) - 10px));
+.timeline li {
+  font-size: 1.2rem;
+  margin: 10px 0;
 }
 
-.timeline-milestone::after {
-    content: attr(--date);
-    position: absolute;
-    top: -30px;
-    font-size: 0.8rem;
-    color: #ff6f61;
+/* Background Hearts */
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
 }
 
-.timeline-milestone::before {
-    content: attr(--event);
-    position: absolute;
-    bottom: -30px;
-    font-size: 0.8rem;
-    color: #ff6f61;
+.heart-falling {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: red;
+  transform: rotate(-45deg);
+  animation: fall linear infinite;
 }
 
-.timeline-milestone:last-child {
-    border: none;
-    width: 40px;
-    height: 40px;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.59-5L12 13.41l-1.59 1.59L9 12l3.59-3.59L12 7l1.59 1.59L16 12z"/></svg>');
-    background-size: cover;
-    background-position: center;
+.heart-falling::before,
+.heart-falling::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: red;
+  border-radius: 50%;
+}
+
+.heart-falling::before {
+  top: -5px;
+  left: 0;
+}
+
+.heart-falling::after {
+  top: 0;
+  left: 5px;
+}
+
+/* Animations */
+@keyframes throw {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-45deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes fly {
+  0% {
+    left: 70px;
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% - 50px);
+    opacity: 0;
+  }
+}
+
+@keyframes fall {
+  0% {
+    top: -20px;
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
 }
