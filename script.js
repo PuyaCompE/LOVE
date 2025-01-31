@@ -77,6 +77,7 @@ const prevMonthButton = document.getElementById("prev-month");
 const nextMonthButton = document.getElementById("next-month");
 const eventInfo = document.getElementById("event-info");
 
+// Function to render the calendar and auto-select the current date
 function renderCalendar() {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -96,6 +97,8 @@ function renderCalendar() {
     calendarDays.appendChild(emptyDay);
   }
 
+  let currentDateElement = null; // To store the current date element
+
   for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
     const dayElement = document.createElement("div");
     dayElement.textContent = day;
@@ -112,6 +115,7 @@ function renderCalendar() {
       day === pstDay
     ) {
       dayElement.classList.add("current-date");
+      currentDateElement = dayElement; // Store the current date element
     }
 
     dayElement.addEventListener("click", () => {
@@ -119,6 +123,11 @@ function renderCalendar() {
     });
 
     calendarDays.appendChild(dayElement);
+  }
+
+  // Automatically select and display events for the current date
+  if (currentDateElement) {
+    currentDateElement.click(); // Simulate a click on the current date
   }
 }
 
