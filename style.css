@@ -12,7 +12,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #e74c3c;
+  background-color: #e74c3c; /* Reddish color */
   padding: 10px 20px;
   color: #fff;
 }
@@ -41,7 +41,7 @@ body {
 .event-form-container {
   max-width: 600px;
   margin: 20px auto;
-  padding: 20px;
+  padding: 15px; /* Reduced padding for smaller height */
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -52,7 +52,7 @@ body {
   font-size: 1.5rem;
   color: #e74c3c;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* Reduced margin for smaller height */
 }
 
 .event-form-container label {
@@ -64,8 +64,8 @@ body {
 .event-form-container input,
 .event-form-container select {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
+  padding: 8px; /* Reduced padding for smaller height */
+  margin-bottom: 10px; /* Reduced margin for smaller height */
   border: 1px solid #ccc;
   border-radius: 5px;
 }
@@ -73,7 +73,7 @@ body {
 .event-form-container button {
   display: block;
   width: 100%;
-  padding: 10px;
+  padding: 8px; /* Reduced padding for smaller height */
   background-color: #e74c3c;
   color: #fff;
   border: none;
@@ -88,7 +88,7 @@ body {
 
 /* Calendar Styles */
 .calendar-container {
-  max-width: 800px;
+  max-width: 600px; /* Match event form width */
   margin: 0 auto;
   background: #fff;
   border-radius: 10px;
@@ -102,8 +102,8 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background: #ffcccc;
-  color: #fff;
+  background-color: #e74c3c; /* Match navbar color */
+  color: #fff; /* White text for visibility */
 }
 
 .calendar-header h2 {
@@ -113,7 +113,7 @@ body {
 .calendar-header button {
   background: none;
   border: none;
-  color: #fff;
+  color: #fff; /* White buttons */
   font-size: 1.5rem;
   cursor: pointer;
 }
@@ -134,6 +134,7 @@ body {
   position: relative;
   background-color: #fff; /* Make days visible */
   color: #333; /* Darker text for visibility */
+  border-bottom: 1px solid #ddd; /* Light border at the bottom */
 }
 
 .calendar-days div:hover {
@@ -149,12 +150,26 @@ body {
   color: #e74c3c;
 }
 
+/* Event Details */
 .event-details {
-  margin-top: 20px;
-  text-align: center;
+  max-width: 600px; /* Match event form and calendar width */
+  margin: 20px auto;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex; /* Align items horizontally */
+  align-items: center;
+}
+
+.event-details h2 {
+  font-size: 1.2rem;
+  margin: 0;
+  margin-right: 10px; /* Space between "Details:" and the info */
 }
 
 #event-info {
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: #666;
+  margin: 0;
 }
