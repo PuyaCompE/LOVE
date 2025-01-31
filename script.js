@@ -38,10 +38,10 @@ function renderCalendar() {
   const lastDayOfMonth = new Date(year, month + 1, 0);
 
   // Get the current date in PST
-  const pstDate = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-  const pstYear = new Date(pstDate).getFullYear();
-  const pstMonth = new Date(pstDate).getMonth() + 1; // Months are zero-indexed
-  const pstDay = new Date(pstDate).getDate();
+  const pstDate = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
+  const pstYear = pstDate.getFullYear();
+  const pstMonth = pstDate.getMonth() + 1; // Months are zero-indexed
+  const pstDay = pstDate.getDate();
 
   for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
     const emptyDay = document.createElement("div");
@@ -111,6 +111,7 @@ document.getElementById("event-form")?.addEventListener("submit", (e) => {
   // Save events to localStorage
   localStorage.setItem('events', JSON.stringify(events));
 
+  // Re-render the calendar immediately
   renderCalendar();
 
   // Clear the form
