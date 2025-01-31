@@ -39,7 +39,7 @@ body {
 
 /* Event Form Container */
 .event-form-container {
-  max-width: 600px; /* Match calendar width */
+  max-width: 600px; /* Match  width */
   margin: 20px auto;
   padding: 10px; /* Reduced padding for smaller height */
   background-color: #fff;
@@ -86,8 +86,8 @@ body {
   background-color: #c0392b;
 }
 
-/* Calendar Styles */
-.calendar-container {
+/*  Styles */
+.-container {
   max-width: 600px; /* Match event form width */
   margin: 0 auto;
   background: #fff;
@@ -145,7 +145,11 @@ body {
 .calendar-days div:hover {
   background: #ffcccc;
 }
-
+/* Selected Date */
+.calendar-days div.selected-date {
+  background-color: #e74c3c !important;
+  color: white !important;
+}
 .calendar-days div.current-date {
   background-color: #b3e5fc; /* Light blue background for today's date */
   color: #333; /* Dark text for visibility */
