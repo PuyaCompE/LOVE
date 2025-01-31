@@ -1,31 +1,42 @@
-// Existing checkbox logic
-function check() {
-  if (
-    document.forms[0].elements[0].checked == true &&
-    document.forms[0].elements[1].checked == true &&
-    document.forms[0].elements[2].checked == true
-  ) {
-    if (!$('.wrapper').hasClass('throb')) {
-      $('.wrapper').addClass('throb');
-    }
-  } else {
-    if ($('.wrapper').hasClass('throb')) {
-      $('.wrapper').removeClass('throb');
-    }
-  }
-}
+// Import Firebase functions
+import { initializeApp } from "firebase/app";
+import { getFirestore, doc, setDoc, getDocs, collection } from "firebase/firestore";
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyC_ynF77nvO3o7Cm58zY_ECs_urM0d_U3E",
+  authDomain: "bearlovemouse-72e6b.firebaseapp.com",
+  projectId: "bearlovemouse-72e6b",
+  storageBucket: "bearlovemouse-72e6b.firebasestorage.app",
+  messagingSenderId: "653453221345",
+  appId: "1:653453221345:web:9850b61e50f4586b9c86a0",
+  measurementId: "G-1E1JQQL8DX"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 // Calendar functionality
-let events = JSON.parse(localStorage.getItem('events')) || {}; // Load events from localStorage
-
 let currentDate = new Date();
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+let events = {}; // Events object to store loaded events
 
 const calendarDays = document.querySelector(".calendar-days");
 const currentMonthElement = document.getElementById("current-month");
 const prevMonthButton = document.getElementById("prev-month");
 const nextMonthButton = document.getElementById("next-month");
 const eventInfo = document.getElementById("event-info");
+
+// Load events from Firestore
+async function loadEventsFromFirestore() {
+  const querySnapshot = await getDocs(collection(db, "events"));
+  const loadedEvents = {};
+  querySnapshot.forEach((doc) => {
+    loadedEvents[doc.id] = `${doc.data().type}: ${doc.data().name}`;
+  });
+  return loadedEvents;
+}
 
 function renderCalendar() {
   const year = currentDate.getFullYear();
@@ -89,10 +100,8 @@ nextMonthButton?.addEventListener("click", () => {
   renderCalendar();
 });
 
-if (calendarDays) renderCalendar();
-
 // Event Creation Form
-document.getElementById("event-form")?.addEventListener("submit", (e) => {
+document.getElementById("event-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const eventName = document.getElementById("event-name").value.trim();
@@ -106,14 +115,27 @@ document.getElementById("event-form")?.addEventListener("submit", (e) => {
   const day = String(today.getDate()).padStart(2, '0');
   const dateKey = `${year}-${month}-${day}`;
 
-  events[dateKey] = `${eventType.charAt(0).toUpperCase() + eventType.slice(1)}: ${eventName}`;
-  
-  // Save events to localStorage
-  localStorage.setItem('events', JSON.stringify(events));
+  const eventData = {
+    date: dateKey,
+    name: eventName,
+    type: eventType.charAt(0).toUpperCase() + eventType.slice(1)
+  };
 
-  // Re-render the calendar immediately
+  // Save event to Firestore
+  await setDoc(doc(db, "events", dateKey), eventData);
+
+  // Update local events object
+  events[dateKey] = `${eventType.charAt(0).toUpperCase() + eventType.slice(1)}: ${eventName}`;
+
+  // Re-render the calendar
   renderCalendar();
 
   // Clear the form
   document.getElementById("event-form").reset();
 });
+
+// Load events from Firestore and render the calendar
+(async () => {
+  events = await loadEventsFromFirestore();
+  renderCalendar();
+})();
