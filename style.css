@@ -153,8 +153,8 @@ body {
   position: absolute;
   bottom: 5px;
   right: 5px;
-  width: 16px; /* Match emoji size */
-  height: 16px; /* Match emoji size */
+  width: 32px; /* Match emoji size */
+  height: 32px; /* Match emoji size */
   background-image: url('snoopemoji.png'); /* Path to your Snoopy emoji */
   background-size: cover; /* Ensure the image fits within the box */
   background-repeat: no-repeat; /* Prevent repetition */
