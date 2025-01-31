@@ -16,13 +16,11 @@ body {
   padding: 10px 20px;
   color: #fff;
 }
-
 .navbar h1 {
   font-size: 1.5rem;
   margin: 0;
   color: #fff; /* Ensure text is visible */
 }
-
 .navbar a {
   text-decoration: none;
   color: #fff;
@@ -32,7 +30,6 @@ body {
   background-color: #c0392b;
   transition: background-color 0.3s ease;
 }
-
 .navbar a:hover {
   background-color: #a52a21;
 }
@@ -41,26 +38,23 @@ body {
 .event-form-container {
   max-width: 600px; /* Match calendar width */
   margin: 20px auto;
-  padding: 10px; /* Reduced padding for smaller height */
+  padding: 15px; /* Consistent padding */
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: left;
 }
-
 .event-form-container h2 {
   font-size: 1.2rem; /* Smaller font size */
   color: #e74c3c;
   text-align: center;
   margin-bottom: 10px; /* Reduced margin for smaller height */
 }
-
 .event-form-container label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
 }
-
 .event-form-container input,
 .event-form-container select {
   width: 100%;
@@ -69,7 +63,6 @@ body {
   border: 1px solid #ccc;
   border-radius: 5px;
 }
-
 .event-form-container button {
   display: block;
   width: 100%;
@@ -81,7 +74,6 @@ body {
   cursor: pointer;
   font-size: 1rem;
 }
-
 .event-form-container button:hover {
   background-color: #c0392b;
 }
@@ -96,7 +88,6 @@ body {
   overflow: hidden;
   margin-top: 20px;
 }
-
 .calendar-header {
   display: flex;
   justify-content: space-between;
@@ -105,11 +96,9 @@ body {
   background-color: #e74c3c; /* Match navbar color */
   color: #fff; /* White text for visibility */
 }
-
 .calendar-header h2 {
   font-size: 1.5rem;
 }
-
 .calendar-header button {
   background: none;
   border: none;
@@ -117,14 +106,12 @@ body {
   font-size: 1.5rem;
   cursor: pointer;
 }
-
 .calendar-days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
   padding: 10px;
 }
-
 .calendar-days div {
   text-align: center;
   padding: 10px;
@@ -136,18 +123,15 @@ body {
   color: #333; /* Darker text for visibility */
   border-bottom: 1px solid #ddd; /* Light border at the bottom */
 }
-
 .calendar-days div:hover {
   background: #ffcccc;
 }
-
 .calendar-days div.current-date {
   background-color: #b3e5fc; /* Light blue background for today's date */
   color: #333; /* Dark text for visibility */
   font-weight: bold; /* Optional: Make the date bold */
   border-radius: 5px; /* Rounded corners */
 }
-
 .calendar-days div.event-day::after {
   content: ""; /* No text content */
   position: absolute;
@@ -165,22 +149,26 @@ body {
 .event-details {
   max-width: 600px; /* Match event form and calendar width */
   margin: 20px auto;
-  padding: 10px;
+  padding: 15px; /* Consistent padding */
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex; /* Align items horizontally */
   align-items: center;
+  justify-content: space-between; /* Space between "Details:" and info */
+  overflow: hidden; /* Prevent overflow */
 }
-
 .event-details h2 {
   font-size: 1.2rem;
   margin: 0;
   margin-right: 10px; /* Space between "Details:" and the info */
 }
-
 #event-info {
   font-size: 1rem;
   color: #666;
   margin: 0;
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Add ellipsis for long text */
+  flex-grow: 1; /* Allow it to take up remaining space */
 }
