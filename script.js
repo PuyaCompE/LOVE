@@ -15,6 +15,7 @@ const db = firebase.firestore();
 
 // Calendar functionality
 let currentDate = new Date();
+let selectedDate = new Date(); // Track selected date
 let events = {}; // Object to store events keyed by date (e.g., "2023-10-15")
 
 // DOM Elements
@@ -85,8 +86,25 @@ function renderCalendar() {
       dayElement.classList.add("current-date");
     }
 
-    // Add click event to show event details
+    // Highlight selected date
+    const isSelectedDate = 
+      selectedDate.getFullYear() === year &&
+      selectedDate.getMonth() === month &&
+      selectedDate.getDate() === day;
+    
+    if (isSelectedDate) {
+      dayElement.classList.add("selected-date");
+    }
+
+    // Add click handler to select the date
     dayElement.addEventListener("click", () => {
+      // Update the selected date
+      selectedDate = new Date(year, month, day);
+      
+      // Re-render to update highlights
+      renderCalendar();
+      
+      // Show event details
       eventInfo.textContent = events[dateKey] || "No events on this day.";
     });
 
@@ -96,13 +114,13 @@ function renderCalendar() {
 
 // Navigate to the previous month
 prevMonthButton?.addEventListener("click", () => {
-  currentDate.setMonth(currentDate.getMonth() - 1); // Move to the previous month
+  currentDate.setMonth(currentDate.getMonth() - 1);
   renderCalendar();
 });
 
 // Navigate to the next month
 nextMonthButton?.addEventListener("click", () => {
-  currentDate.setMonth(currentDate.getMonth() + 1); // Move to the next month
+  currentDate.setMonth(currentDate.getMonth() + 1);
   renderCalendar();
 });
 
@@ -116,16 +134,15 @@ document.getElementById("event-form")?.addEventListener("submit", async (e) => {
 
   if (!eventName) return;
 
-  // Get today's date in "YYYY-MM-DD" format
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
+  // Use SELECTED DATE instead of today's date
+  const year = selectedDate.getFullYear();
+  const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+  const day = String(selectedDate.getDate()).padStart(2, '0');
   const dateKey = `${year}-${month}-${day}`;
 
   // Create event data
   const eventData = {
-    date: dateKey, // Use the date as the key
+    date: dateKey, // Use the selected date as the key
     name: eventName,
     type: eventType.charAt(0).toUpperCase() + eventType.slice(1)
   };
