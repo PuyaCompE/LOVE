@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Our Memories</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
 </head>
 <body>
   <!-- Navigation Bar -->
@@ -19,14 +22,12 @@
     <form id="event-form">
       <label for="event-name">Event Name:</label>
       <input type="text" id="event-name" placeholder="Enter event name" required>
-
       <label for="event-type">Type:</label>
       <select id="event-type" required>
         <option value="event">Event</option>
         <option value="food">Food</option>
         <option value="place">Place</option>
       </select>
-
       <button type="submit">Add Event</button>
     </form>
   </div>
