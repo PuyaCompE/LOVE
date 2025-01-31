@@ -1,8 +1,10 @@
 // Import Firebase functions
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, setDoc, getDocs, collection } from "firebase/firestore";
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
 
-// Your web app's Firebase configuration
+// Initialize Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyC_ynF77nvO3o7Cm58zY_ECs_urM0d_U3E",
   authDomain: "bearlovemouse-72e6b.firebaseapp.com",
@@ -13,9 +15,9 @@ const firebaseConfig = {
   measurementId: "G-1E1JQQL8DX"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Initialize Firebase App
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 // Calendar functionality
 let currentDate = new Date();
@@ -27,6 +29,11 @@ const currentMonthElement = document.getElementById("current-month");
 const prevMonthButton = document.getElementById("prev-month");
 const nextMonthButton = document.getElementById("next-month");
 const eventInfo = document.getElementById("event-info");
+
+console.log("Calendar Days Element:", calendarDays);
+console.log("Current Month Element:", currentMonthElement);
+console.log("Prev Month Button:", prevMonthButton);
+console.log("Next Month Button:", nextMonthButton);
 
 // Load events from Firestore
 async function loadEventsFromFirestore() {
@@ -86,20 +93,18 @@ function renderCalendar() {
   }
 }
 
-// Navigate to the previous month
 prevMonthButton?.addEventListener("click", () => {
   currentDate.setDate(1); // Reset to the first day of the current month
   currentDate.setMonth(currentDate.getMonth() - 1); // Move to the previous month
   renderCalendar();
 });
 
-// Navigate to the next month
 nextMonthButton?.addEventListener("click", () => {
   currentDate.setDate(1); // Reset to the first day of the current month
   currentDate.setMonth(currentDate.getMonth() + 1); // Move to the next month
   renderCalendar();
 });
-
+console.log("Navigating to month:", currentDate);
 // Event Creation Form
 document.getElementById("event-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
