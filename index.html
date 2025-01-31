@@ -5,17 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy 1 Year Anniversary</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cursive&display=swap" rel="stylesheet">
 </head>
 <body>
+    <audio autoplay loop>
+        <source src="background-music.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
     <div class="heart-container">
         <div class="container">
-            <h1>Happy 1 Year Anniversary!</h1>
+            <h1>Happy 1 Year Anniversary</h1>
+            <p class="message">My dearest [Her Name],<br>Thank you for being the love of my life.</p>
             <div class="snoopy">
                 <!-- You can replace this with an actual Snoopy image or GIF -->
                 <img src="snoopy.gif" alt="Snoopy Sending a Kiss">
             </div>
         </div>
         <div class="hearts"></div>
+        <div class="confetti"></div>
+    </div>
+    <div class="timeline">
+        <div class="timeline-arrow"></div>
+        <div class="timeline-milestone" style="--position: 0%; --date: 'Jan 6, 2024'; --event: 'First Met';"></div>
+        <div class="timeline-milestone" style="--position: 33%; --date: 'Feb 2, 2024'; --event: 'First Said I Love You';"></div>
+        <div class="timeline-milestone" style="--position: 100%; --date: ''; --event: '∞';"></div>
     </div>
     <script src="script.js"></script>
 </body>
