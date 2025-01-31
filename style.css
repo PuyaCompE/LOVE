@@ -34,6 +34,54 @@ body {
   background-color: #a52a21;
 }
 
+/* Event Form Container */
+.event-form-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+.event-form-container h2 {
+  font-size: 1.2rem;
+  color: #e74c3c;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.event-form-container label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.event-form-container input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.event-form-container .event-type-buttons {
+  display: flex;
+  gap: 10px; /* Small gap between buttons */
+  margin-top: 10px;
+}
+.event-form-container .event-type-buttons button {
+  flex: 1; /* Each button takes half the width */
+  padding: 8px;
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+.event-form-container .event-type-buttons button:hover {
+  background-color: #c0392b;
+}
+
 /* Calendar Styles */
 .calendar-container {
   max-width: 600px;
@@ -98,54 +146,6 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-}
-
-/* Event Form Container */
-.event-form-container {
-  max-width: 600px;
-  margin: 20px auto;
-  padding: 15px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: left;
-}
-.event-form-container h2 {
-  font-size: 1.2rem;
-  color: #e74c3c;
-  text-align: center;
-  margin-bottom: 10px;
-}
-.event-form-container label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-.event-form-container input {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-.event-form-container .event-type-buttons {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-.event-form-container .event-type-buttons button {
-  flex: 1;
-  padding: 8px;
-  background-color: #e74c3c;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-}
-.event-form-container .event-type-buttons button:hover {
-  background-color: #c0392b;
 }
 
 /* Event Details */
