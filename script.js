@@ -1,14 +1,9 @@
-// Import Firebase functions
-import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, getDocs, collection } from "firebase/firestore";
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
-// Initialize Firebase App
+// Initialize Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyC_ynF77nvO3o7Cm58zY_ECs_urM0d_U3E",
   authDomain: "bearlovemouse-72e6b.firebaseapp.com",
   projectId: "bearlovemouse-72e6b",
-  storageBucket: "bearlovemouse-72e6b.firebasestorage.app",
+  storageBucket: "bearlovemouse-72e6b.appspot.com",
   messagingSenderId: "653453221345",
   appId: "1:653453221345:web:9850b61e50f4586b9c86a0",
   measurementId: "G-1E1JQQL8DX"
@@ -101,14 +96,12 @@ function renderCalendar() {
 
 // Navigate to the previous month
 prevMonthButton?.addEventListener("click", () => {
-  currentDate.setDate(1); // Reset to the first day of the current month
   currentDate.setMonth(currentDate.getMonth() - 1); // Move to the previous month
   renderCalendar();
 });
 
 // Navigate to the next month
 nextMonthButton?.addEventListener("click", () => {
-  currentDate.setDate(1); // Reset to the first day of the current month
   currentDate.setMonth(currentDate.getMonth() + 1); // Move to the next month
   renderCalendar();
 });
