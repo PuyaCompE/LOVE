@@ -6,24 +6,17 @@ function check() {
     document.forms[0].elements[2].checked == true
   ) {
     if (!$('.wrapper').hasClass('throb')) {
-      // Do things on Nav Close
       $('.wrapper').addClass('throb');
     }
   } else {
     if ($('.wrapper').hasClass('throb')) {
-      // Do things on Nav Close
       $('.wrapper').removeClass('throb');
     }
   }
 }
 
 // Calendar functionality
-const events = {
-  "2023-01-15": "Visited the Eiffel Tower",
-  "2023-02-10": "Ate at the best sushi restaurant",
-  "2023-03-22": "Attended a concert",
-  // Add more events here
-};
+const events = {};
 
 let currentDate = new Date();
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -55,8 +48,7 @@ function renderCalendar() {
 
     const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     if (events[dateKey]) {
-      dayElement.style.backgroundColor = "#ffcccc";
-      dayElement.style.color = "#fff";
+      dayElement.classList.add("event-day");
       dayElement.title = events[dateKey];
     }
 
@@ -79,3 +71,18 @@ nextMonthButton?.addEventListener("click", () => {
 });
 
 if (calendarDays) renderCalendar();
+
+// Event Creation Form
+document.getElementById("event-form")?.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const eventName = document.getElementById("event-name").value.trim();
+  const eventType = document.getElementById("event-type").value;
+
+  if (!eventName) return;
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const dateKey = `${year}-${month}-${day}`;
