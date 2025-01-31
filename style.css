@@ -123,6 +123,7 @@ body {
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
   padding: 10px;
+  min-height: 300px; /* Ensure calendar has a fixed height */
 }
 
 .calendar-days div {
@@ -132,9 +133,13 @@ body {
   cursor: pointer;
   transition: background 0.3s ease;
   position: relative;
-  background-color: #fff; /* Make days visible */
-  color: #333; /* Darker text for visibility */
-  border-bottom: 1px solid #ddd; /* Light border at the bottom */
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ddd; /* Add full border (not just bottom) */
+  min-height: 40px; /* Ensure days have consistent height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .calendar-days div:hover {
