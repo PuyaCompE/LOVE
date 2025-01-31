@@ -141,13 +141,18 @@ body {
   background: #ffcccc;
 }
 
+/* Calendar Styles */
 .calendar-days div.event-day::after {
-  content: "🐻";
+  content: ""; /* No text content */
   position: absolute;
   bottom: 5px;
   right: 5px;
-  font-size: 1.2rem;
-  color: #e74c3c;
+  width: 16px; /* Match emoji size */
+  height: 16px; /* Match emoji size */
+  background-image: url('snoopemoji.png'); /* Path to your Snoopy emoji */
+  background-size: cover; /* Ensure the image fits within the box */
+  background-repeat: no-repeat; /* Prevent repetition */
+  background-position: center; /* Center the image */
 }
 
 /* Event Details */
