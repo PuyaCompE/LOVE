@@ -2,14 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>I Love You Animation Using HTML and CSS</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Happy 1 Year Anniversary!</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #e74c3c;
+        }
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+        img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .heart {
+            color: #e74c3c;
+            font-size: 2rem;
+            animation: beat 1s infinite;
+        }
+        @keyframes beat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
-    <h1 id="announcement" style="display: none; color: #ff4d4d; font-size: 3rem;">Happy Anniversary!</h1>
-    <script src="app.js"></script>
+    <div class="container">
+        <h1>Happy 1 Year Anniversary!</h1>
+        <p>Dear Mouse,</p>
+        <p>It's been an incredible journey together. From the moment we met, you've filled my life with love, joy, and endless happiness. Every moment with you feels like a dream come true.</p>
+        <p>Here's to many more years of laughter, adventures, and love. I cherish every second with you, and I can't wait to see what the future holds for us.</p>
+        <p>With all my love,</p>
+        <p>Bear</p>
+        <img src="snoopy.gif" alt="Our Photo">
+        <div class="heart">❤️</div>
+    </div>
 </body>
 </html>
