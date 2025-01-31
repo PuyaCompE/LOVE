@@ -13,6 +13,24 @@
     <a href="index.html">Back to Anniversary Page</a>
   </div>
 
+  <!-- Event Creation Form -->
+  <div class="event-form-container">
+    <h2>Create a New Event</h2>
+    <form id="event-form">
+      <label for="event-name">Event Name:</label>
+      <input type="text" id="event-name" placeholder="Enter event name" required>
+
+      <label for="event-type">Type:</label>
+      <select id="event-type" required>
+        <option value="event">Event</option>
+        <option value="food">Food</option>
+        <option value="place">Place</option>
+      </select>
+
+      <button type="submit">Add Event</button>
+    </form>
+  </div>
+
   <!-- Calendar Content -->
   <main>
     <div class="calendar-container">
