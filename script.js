@@ -3,22 +3,28 @@ const REPO_OWNER = 'PuyaCompE';
 const REPO_NAME = 'LOVE';
 const EVENTS_FILE_PATH = 'events.json';
 
-let events = {};
+let events = {}; // Initialize events as an empty object
 
 // Function to fetch events from GitHub
 async function fetchEvents() {
   const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${EVENTS_FILE_PATH}`;
-  const response = await fetch(url, {
-    headers: {
-      'Authorization': `token ${GITHUB_TOKEN}`,
-      'Accept': 'application/vnd.github.v3+json'
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `token ${GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    const data = await response.json();
+    if (data.content) {
+      events = JSON.parse(atob(data.content)); // Decode base64 content
     }
-  });
-  const data = await response.json();
-  if (data.content) {
-    events = JSON.parse(atob(data.content));
+  } catch (error) {
+    console.error('Error fetching events from GitHub:', error);
+    // Fallback to localStorage if GitHub fetch fails
+    events = JSON.parse(localStorage.getItem('events')) || {};
   }
-  renderCalendar();
+  renderCalendar(); // Render the calendar after fetching events
 }
 
 // Function to save events to GitHub
@@ -33,7 +39,7 @@ async function saveEvents() {
   const data = await response.json();
   const sha = data.sha;
 
-  const content = btoa(JSON.stringify(events));
+  const content = btoa(JSON.stringify(events)); // Encode to base64
   const commitMessage = 'Update events';
 
   await fetch(url, {
@@ -50,6 +56,9 @@ async function saveEvents() {
     })
   });
 }
+
+// Fetch events when the page loads
+fetchEvents();
 
 // Existing checkbox logic
 function check() {
