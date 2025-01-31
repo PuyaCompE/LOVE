@@ -75,13 +75,17 @@ function renderCalendar() {
   }
 }
 
+// Navigate to the previous month
 prevMonthButton?.addEventListener("click", () => {
-  currentDate.setMonth(currentDate.getMonth() - 1);
+  currentDate.setDate(1); // Reset to the first day of the current month
+  currentDate.setMonth(currentDate.getMonth() - 1); // Move to the previous month
   renderCalendar();
 });
 
+// Navigate to the next month
 nextMonthButton?.addEventListener("click", () => {
-  currentDate.setMonth(currentDate.getMonth() + 1);
+  currentDate.setDate(1); // Reset to the first day of the current month
+  currentDate.setMonth(currentDate.getMonth() + 1); // Move to the next month
   renderCalendar();
 });
 
