@@ -86,3 +86,10 @@ document.getElementById("event-form")?.addEventListener("submit", (e) => {
   const month = String(today.getMonth() + 1).padStart(2, '0');
   const day = String(today.getDate()).padStart(2, '0');
   const dateKey = `${year}-${month}-${day}`;
+
+  events[dateKey] = `${eventType.charAt(0).toUpperCase() + eventType.slice(1)}: ${eventName}`;
+  renderCalendar();
+
+  // Clear the form
+  document.getElementById("event-form").reset();
+});
