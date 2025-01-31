@@ -16,7 +16,7 @@ function check() {
 }
 
 // Calendar functionality
-const events = {};
+let events = JSON.parse(localStorage.getItem('events')) || {}; // Load events from localStorage
 
 let currentDate = new Date();
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -88,6 +88,10 @@ document.getElementById("event-form")?.addEventListener("submit", (e) => {
   const dateKey = `${year}-${month}-${day}`;
 
   events[dateKey] = `${eventType.charAt(0).toUpperCase() + eventType.slice(1)}: ${eventName}`;
+  
+  // Save events to localStorage
+  localStorage.setItem('events', JSON.stringify(events));
+
   renderCalendar();
 
   // Clear the form
