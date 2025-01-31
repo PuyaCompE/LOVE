@@ -3,8 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, doc, setDoc, getDocs, collection } from "firebase/firestore";
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
-
-// Initialize Firebase
+// Initialize Firebase App
 const firebaseConfig = {
   apiKey: "AIzaSyC_ynF77nvO3o7Cm58zY_ECs_urM0d_U3E",
   authDomain: "bearlovemouse-72e6b.firebaseapp.com",
@@ -15,7 +14,7 @@ const firebaseConfig = {
   measurementId: "G-1E1JQQL8DX"
 };
 
-// Initialize Firebase App
+// Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
@@ -24,20 +23,16 @@ let currentDate = new Date();
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 let events = {}; // Events object to store loaded events
 
+// DOM Elements
 const calendarDays = document.querySelector(".calendar-days");
 const currentMonthElement = document.getElementById("current-month");
 const prevMonthButton = document.getElementById("prev-month");
 const nextMonthButton = document.getElementById("next-month");
 const eventInfo = document.getElementById("event-info");
 
-console.log("Calendar Days Element:", calendarDays);
-console.log("Current Month Element:", currentMonthElement);
-console.log("Prev Month Button:", prevMonthButton);
-console.log("Next Month Button:", nextMonthButton);
-
 // Load events from Firestore
 async function loadEventsFromFirestore() {
-  const querySnapshot = await getDocs(collection(db, "events"));
+  const querySnapshot = await db.collection("events").get();
   const loadedEvents = {};
   querySnapshot.forEach((doc) => {
     loadedEvents[doc.id] = `${doc.data().type}: ${doc.data().name}`;
@@ -45,13 +40,18 @@ async function loadEventsFromFirestore() {
   return loadedEvents;
 }
 
+// Render the calendar
 function renderCalendar() {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
+  // Update the current month display
   currentMonthElement.textContent = `${new Intl.DateTimeFormat('en-US', { month: 'long' }).format(currentDate)} ${year}`;
+
+  // Clear the calendar days container
   calendarDays.innerHTML = "";
 
+  // Calculate the first day of the month and the last day of the month
   const firstDayOfMonth = new Date(year, month, 1);
   const lastDayOfMonth = new Date(year, month + 1, 0);
 
@@ -61,16 +61,21 @@ function renderCalendar() {
   const pstMonth = pstDate.getMonth() + 1; // Months are zero-indexed
   const pstDay = pstDate.getDate();
 
+  // Add empty days for the first week
   for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
     const emptyDay = document.createElement("div");
     calendarDays.appendChild(emptyDay);
   }
 
+  // Add days of the month
   for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
     const dayElement = document.createElement("div");
     dayElement.textContent = day;
 
+    // Create a date key for the current day
     const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+    // Check if there's an event for this day
     if (events[dateKey]) {
       dayElement.classList.add("event-day");
       dayElement.title = events[dateKey];
@@ -85,6 +90,7 @@ function renderCalendar() {
       dayElement.classList.add("current-date");
     }
 
+    // Add click event to show event details
     dayElement.addEventListener("click", () => {
       eventInfo.textContent = events[dateKey] || "No events on this day.";
     });
@@ -93,33 +99,38 @@ function renderCalendar() {
   }
 }
 
+// Navigate to the previous month
 prevMonthButton?.addEventListener("click", () => {
   currentDate.setDate(1); // Reset to the first day of the current month
   currentDate.setMonth(currentDate.getMonth() - 1); // Move to the previous month
   renderCalendar();
 });
 
+// Navigate to the next month
 nextMonthButton?.addEventListener("click", () => {
   currentDate.setDate(1); // Reset to the first day of the current month
   currentDate.setMonth(currentDate.getMonth() + 1); // Move to the next month
   renderCalendar();
 });
-console.log("Navigating to month:", currentDate);
+
 // Event Creation Form
 document.getElementById("event-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  // Get form values
   const eventName = document.getElementById("event-name").value.trim();
   const eventType = document.getElementById("event-type").value;
 
   if (!eventName) return;
 
+  // Get today's date
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, '0');
   const day = String(today.getDate()).padStart(2, '0');
   const dateKey = `${year}-${month}-${day}`;
 
+  // Create event data
   const eventData = {
     date: dateKey,
     name: eventName,
@@ -127,7 +138,7 @@ document.getElementById("event-form")?.addEventListener("submit", async (e) => {
   };
 
   // Save event to Firestore
-  await setDoc(doc(db, "events", dateKey), eventData);
+  await db.collection("events").doc(dateKey).set(eventData);
 
   // Update local events object
   events[dateKey] = `${eventType.charAt(0).toUpperCase() + eventType.slice(1)}: ${eventName}`;
