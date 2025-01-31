@@ -135,10 +135,8 @@ nextMonthButton?.addEventListener("click", () => {
 if (calendarDays) fetchEvents().then(renderCalendar);
 
 // Event Creation Form
-document.getElementById("event-form")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
+document.getElementById("add-food")?.addEventListener("click", async () => {
   const eventName = document.getElementById("event-name").value.trim();
-  const eventType = document.getElementById("event-type").value;
   if (!eventName) return;
 
   const today = new Date();
@@ -147,10 +145,26 @@ document.getElementById("event-form")?.addEventListener("submit", async (e) => {
   const day = String(today.getDate()).padStart(2, '0');
   const dateKey = `${year}-${month}-${day}`;
 
-  events[dateKey] = `${eventType.charAt(0).toUpperCase() + eventType.slice(1)}: ${eventName}`;
+  events[dateKey] = `Food: ${eventName}`;
   await saveEvents();
 
   renderCalendar();
-  // Clear the form
+  document.getElementById("event-form").reset();
+});
+
+document.getElementById("add-place")?.addEventListener("click", async () => {
+  const eventName = document.getElementById("event-name").value.trim();
+  if (!eventName) return;
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const dateKey = `${year}-${month}-${day}`;
+
+  events[dateKey] = `Place: ${eventName}`;
+  await saveEvents();
+
+  renderCalendar();
   document.getElementById("event-form").reset();
 });
