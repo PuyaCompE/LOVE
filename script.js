@@ -1,30 +1,11 @@
-// Existing checkbox logic
-function check() {
-  if (
-    document.forms[0].elements[0].checked == true &&
-    document.forms[0].elements[1].checked == true &&
-    document.forms[0].elements[2].checked == true
-  ) {
-    if (!$('.wrapper').hasClass('throb')) {
-      $('.wrapper').addClass('throb');
-    }
-  } else {
-    if ($('.wrapper').hasClass('throb')) {
-      $('.wrapper').removeClass('throb');
-    }
-  }
-}
-
 // Initialize Firebase
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyC_ynF77nvO3o7Cm58zY_ECs_urM0d_U3E",
-  authDomain: "bearlovemouse-72e6b.firebaseapp.com",
-  projectId: "bearlovemouse-72e6b",
-  storageBucket: "bearlovemouse-72e6b.firebasestorage.app",
-  messagingSenderId: "653453221345",
-  appId: "1:653453221345:web:9850b61e50f4586b9c86a0",
-  measurementId: "G-1E1JQQL8DX"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
 
 // Initialize Firebase App
@@ -39,7 +20,7 @@ const prevMonthButton = document.getElementById("prev-month");
 const nextMonthButton = document.getElementById("next-month");
 const eventInfo = document.getElementById("event-info");
 
-// Load events from Firestore
+// Load Events from Firestore
 async function loadEvents() {
   const eventsSnapshot = await db.collection("events").get();
   const events = {};
@@ -56,36 +37,25 @@ async function renderCalendar() {
   const month = currentDate.getMonth();
   currentMonthElement.textContent = `${new Intl.DateTimeFormat('en-US', { month: 'long' }).format(currentDate)} ${year}`;
   calendarDays.innerHTML = "";
+
   const firstDayOfMonth = new Date(year, month, 1);
   const lastDayOfMonth = new Date(year, month + 1, 0);
 
-  // Get the current date in PST
-  const pstDate = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-  const pstYear = new Date(pstDate).getFullYear();
-  const pstMonth = new Date(pstDate).getMonth() + 1; // Months are zero-indexed
-  const pstDay = new Date(pstDate).getDate();
-
+  // Add empty days for the first week
   for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
     const emptyDay = document.createElement("div");
     calendarDays.appendChild(emptyDay);
   }
 
+  // Add days of the month
   for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
     const dayElement = document.createElement("div");
     dayElement.textContent = day;
     const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
     if (events[dateKey]) {
       dayElement.classList.add("event-day");
       dayElement.title = events[dateKey];
-    }
-
-    // Highlight the current date in PST
-    if (
-      year === pstYear &&
-      month + 1 === pstMonth && // Months are zero-indexed
-      day === pstDay
-    ) {
-      dayElement.classList.add("current-date");
     }
 
     dayElement.addEventListener("click", () => {
@@ -96,23 +66,12 @@ async function renderCalendar() {
   }
 }
 
-prevMonthButton?.addEventListener("click", () => {
-  currentDate.setMonth(currentDate.getMonth() - 1);
-  renderCalendar();
-});
-
-nextMonthButton?.addEventListener("click", () => {
-  currentDate.setMonth(currentDate.getMonth() + 1);
-  renderCalendar();
-});
-
-if (calendarDays) renderCalendar();
-
 // Event Creation Form
 document.getElementById("event-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const eventName = document.getElementById("event-name").value.trim();
   const eventType = document.getElementById("event-type").value;
+
   if (!eventName) return;
 
   const today = new Date();
@@ -127,6 +86,19 @@ document.getElementById("event-form")?.addEventListener("submit", async (e) => {
   });
 
   renderCalendar();
-  // Clear the form
   document.getElementById("event-form").reset();
 });
+
+// Month Navigation
+prevMonthButton?.addEventListener("click", () => {
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  renderCalendar();
+});
+
+nextMonthButton?.addEventListener("click", () => {
+  currentDate.setMonth(currentDate.getMonth() + 1);
+  renderCalendar();
+});
+
+// Initial Render
+if (calendarDays) renderCalendar();
