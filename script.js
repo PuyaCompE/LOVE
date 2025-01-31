@@ -15,8 +15,7 @@ const db = firebase.firestore();
 
 // Calendar functionality
 let currentDate = new Date();
-const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-let events = {}; // Events object to store loaded events
+let events = {}; // Object to store events keyed by date (e.g., "2023-10-15")
 
 // DOM Elements
 const calendarDays = document.querySelector(".calendar-days");
@@ -30,7 +29,8 @@ async function loadEventsFromFirestore() {
   const querySnapshot = await db.collection("events").get();
   const loadedEvents = {};
   querySnapshot.forEach((doc) => {
-    loadedEvents[doc.id] = `${doc.data().type}: ${doc.data().name}`;
+    const eventData = doc.data();
+    loadedEvents[eventData.date] = `${eventData.type}: ${eventData.name}`;
   });
   return loadedEvents;
 }
@@ -67,19 +67,19 @@ function renderCalendar() {
     const dayElement = document.createElement("div");
     dayElement.textContent = day;
 
-    // Create a date key for the current day
+    // Create a date key for the current day (e.g., "2023-10-15")
     const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
     // Check if there's an event for this day
     if (events[dateKey]) {
       dayElement.classList.add("event-day");
-      dayElement.title = events[dateKey];
+      dayElement.title = events[dateKey]; // Show event details on hover
     }
 
     // Highlight the current date in PST
     if (
       year === pstYear &&
-      month + 1 === pstMonth && // Months are zero-indexed
+      month + 1 === pstMonth &&
       day === pstDay
     ) {
       dayElement.classList.add("current-date");
@@ -116,7 +116,7 @@ document.getElementById("event-form")?.addEventListener("submit", async (e) => {
 
   if (!eventName) return;
 
-  // Get today's date
+  // Get today's date in "YYYY-MM-DD" format
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -125,7 +125,7 @@ document.getElementById("event-form")?.addEventListener("submit", async (e) => {
 
   // Create event data
   const eventData = {
-    date: dateKey,
+    date: dateKey, // Use the date as the key
     name: eventName,
     type: eventType.charAt(0).toUpperCase() + eventType.slice(1)
   };
@@ -134,7 +134,7 @@ document.getElementById("event-form")?.addEventListener("submit", async (e) => {
   await db.collection("events").doc(dateKey).set(eventData);
 
   // Update local events object
-  events[dateKey] = `${eventType.charAt(0).toUpperCase() + eventType.slice(1)}: ${eventName}`;
+  events[dateKey] = `${eventData.type}: ${eventData.name}`;
 
   // Re-render the calendar
   renderCalendar();
