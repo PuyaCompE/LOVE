@@ -39,9 +39,9 @@ body {
 
 /* Event Form Container */
 .event-form-container {
-  max-width: 600px;
+  max-width: 600px; /* Match calendar width */
   margin: 20px auto;
-  padding: 15px; /* Reduced padding for smaller height */
+  padding: 10px; /* Reduced padding for smaller height */
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -49,7 +49,7 @@ body {
 }
 
 .event-form-container h2 {
-  font-size: 1.5rem;
+  font-size: 1.2rem; /* Smaller font size */
   color: #e74c3c;
   text-align: center;
   margin-bottom: 10px; /* Reduced margin for smaller height */
@@ -141,7 +141,13 @@ body {
   background: #ffcccc;
 }
 
-/* Calendar Styles */
+.calendar-days div.current-date {
+  background-color: #b3e5fc; /* Light blue background for today's date */
+  color: #333; /* Dark text for visibility */
+  font-weight: bold; /* Optional: Make the date bold */
+  border-radius: 5px; /* Rounded corners */
+}
+
 .calendar-days div.event-day::after {
   content: ""; /* No text content */
   position: absolute;
