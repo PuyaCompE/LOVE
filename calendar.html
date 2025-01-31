@@ -13,6 +13,19 @@
     <a href="index.html">Back to Anniversary Page</a>
   </div>
 
+  <!-- Event Creation Form -->
+  <div class="event-form-container">
+    <h2>Create a New Event</h2>
+    <form id="event-form">
+      <label for="event-name">Event Name:</label>
+      <input type="text" id="event-name" placeholder="Enter event name" required>
+      <div class="event-type-buttons">
+        <button type="button" id="add-food">Food</button>
+        <button type="button" id="add-place">Place</button>
+      </div>
+    </form>
+  </div>
+
   <!-- Calendar Content -->
   <main>
     <div class="calendar-container">
@@ -24,19 +37,6 @@
       <div class="calendar-days">
         <!-- Days will be dynamically generated -->
       </div>
-    </div>
-
-    <!-- Event Creation Form -->
-    <div class="event-form-container">
-      <h2>Create a New Event</h2>
-      <form id="event-form">
-        <label for="event-name">Event Name:</label>
-        <input type="text" id="event-name" placeholder="Enter event name" required>
-        <div class="event-type-buttons">
-          <button type="button" id="add-food">Food</button>
-          <button type="button" id="add-place">Place</button>
-        </div>
-      </form>
     </div>
 
     <!-- Event Details -->
