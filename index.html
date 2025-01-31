@@ -9,7 +9,6 @@
             font-family: 'Arial', sans-serif;
             background-color: #f9f9f9;
             color: #333;
-            text-align: center;
             margin: 0;
             padding: 0;
         }
@@ -20,24 +19,31 @@
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left; /* Left-align text inside the container */
         }
         h1 {
             font-size: 2.5rem;
             color: #e74c3c;
+            text-align: center; /* Center the heading */
         }
         p {
             font-size: 1.2rem;
             line-height: 1.6;
+            margin: 15px 0; /* Add some spacing between paragraphs */
         }
         img {
             max-width: 100%;
             border-radius: 10px;
             margin: 20px 0;
+            display: block; /* Center the image */
+            margin-left: auto;
+            margin-right: auto;
         }
         .heart {
             color: #e74c3c;
             font-size: 2rem;
             animation: beat 1s infinite;
+            text-align: center; /* Center the heart */
         }
         @keyframes beat {
             0%, 100% { transform: scale(1); }
@@ -48,12 +54,12 @@
 <body>
     <div class="container">
         <h1>Happy 1 Year Anniversary!</h1>
-        <p>Dear Mouse,</p>
+        <p>Dear [Partner's Name],</p>
         <p>It's been an incredible journey together. From the moment we met, you've filled my life with love, joy, and endless happiness. Every moment with you feels like a dream come true.</p>
         <p>Here's to many more years of laughter, adventures, and love. I cherish every second with you, and I can't wait to see what the future holds for us.</p>
         <p>With all my love,</p>
-        <p>Bear</p>
-        <img src="snoopy.gif" alt="Our Photo">
+        <p>[Your Name]</p>
+        <img src="your-photo.jpg" alt="Our Photo">
         <div class="heart">❤️</div>
     </div>
 </body>
