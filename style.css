@@ -39,7 +39,7 @@ body {
 
 /* Event Form Container */
 .event-form-container {
-  max-width: 600px; /* Match  width */
+  max-width: 600px; /* Match calendar width */
   margin: 20px auto;
   padding: 10px; /* Reduced padding for smaller height */
   background-color: #fff;
@@ -86,8 +86,8 @@ body {
   background-color: #c0392b;
 }
 
-/*  Styles */
-.-container {
+/* Calendar Styles */
+.calendar-container {
   max-width: 600px; /* Match event form width */
   margin: 0 auto;
   background: #fff;
@@ -123,7 +123,6 @@ body {
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
   padding: 10px;
-  min-height: 300px; /* Ensure calendar has a fixed height */
 }
 
 .calendar-days div {
@@ -133,23 +132,15 @@ body {
   cursor: pointer;
   transition: background 0.3s ease;
   position: relative;
-  background-color: #fff;
-  color: #333;
-  border: 1px solid #ddd; /* Add full border (not just bottom) */
-  min-height: 40px; /* Ensure days have consistent height */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-color: #fff; /* Make days visible */
+  color: #333; /* Darker text for visibility */
+  border-bottom: 1px solid #ddd; /* Light border at the bottom */
 }
 
 .calendar-days div:hover {
   background: #ffcccc;
 }
-/* Selected Date */
-.calendar-days div.selected-date {
-  background-color: #e74c3c !important;
-  color: white !important;
-}
+
 .calendar-days div.current-date {
   background-color: #b3e5fc; /* Light blue background for today's date */
   color: #333; /* Dark text for visibility */
