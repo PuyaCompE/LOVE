@@ -86,6 +86,8 @@ const prevMonthButton = document.getElementById("prev-month");
 const nextMonthButton = document.getElementById("next-month");
 const eventInfo = document.getElementById("event-info");
 
+let selectedDate = null; // Track the currently selected date
+
 // Function to render the calendar and auto-select the current date
 function renderCalendar() {
   const year = currentDate.getFullYear();
@@ -106,8 +108,6 @@ function renderCalendar() {
     calendarDays.appendChild(emptyDay);
   }
 
-  let currentDateElement = null; // To store the current date element
-
   for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
     const dayElement = document.createElement("div");
     dayElement.textContent = day;
@@ -124,47 +124,38 @@ function renderCalendar() {
       day === pstDay
     ) {
       dayElement.classList.add("current-date");
-      currentDateElement = dayElement; // Store the current date element
+    }
+
+    // Highlight the selected date
+    if (selectedDate === dateKey) {
+      dayElement.classList.add("selected-date");
     }
 
     dayElement.addEventListener("click", () => {
+      selectedDate = dateKey; // Set the selected date
       eventInfo.textContent = events[dateKey] || "No events on this day.";
+      renderCalendar(); // Re-render the calendar to update the selected date highlight
     });
 
     calendarDays.appendChild(dayElement);
   }
 
-  // Automatically select and display events for the current date
-  if (currentDateElement) {
-    currentDateElement.click(); // Simulate a click on the current date
+  // Automatically select and display events for the current date if no date is selected
+  if (!selectedDate) {
+    const currentDateKey = `${pstYear}-${String(pstMonth).padStart(2, '0')}-${String(pstDay).padStart(2, '0')}`;
+    selectedDate = currentDateKey;
+    eventInfo.textContent = events[currentDateKey] || "No events on this day.";
   }
 }
-
-prevMonthButton?.addEventListener("click", () => {
-  currentDate.setMonth(currentDate.getMonth() - 1);
-  renderCalendar();
-});
-
-nextMonthButton?.addEventListener("click", () => {
-  currentDate.setMonth(currentDate.getMonth() + 1);
-  renderCalendar();
-});
-
-if (calendarDays) fetchEvents().then(renderCalendar);
 
 // Event Creation Form
 document.getElementById("add-food")?.addEventListener("click", async () => {
   const eventName = document.getElementById("event-name").value.trim();
-  if (!eventName) return;
+  if (!eventName || !selectedDate) return;
 
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  const dateKey = `${year}-${month}-${day}`;
-
-  events[dateKey] = `Food: ${eventName}`;
-  await saveEvents();
+  events[selectedDate] = `Food: ${eventName}`;
+  await saveEvents(); // Save to GitHub
+  localStorage.setItem('events', JSON.stringify(events)); // Save to localStorage
 
   renderCalendar();
   document.getElementById("event-form").reset();
@@ -172,16 +163,11 @@ document.getElementById("add-food")?.addEventListener("click", async () => {
 
 document.getElementById("add-place")?.addEventListener("click", async () => {
   const eventName = document.getElementById("event-name").value.trim();
-  if (!eventName) return;
+  if (!eventName || !selectedDate) return;
 
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  const dateKey = `${year}-${month}-${day}`;
-
-  events[dateKey] = `Place: ${eventName}`;
-  await saveEvents();
+  events[selectedDate] = `Place: ${eventName}`;
+  await saveEvents(); // Save to GitHub
+  localStorage.setItem('events', JSON.stringify(events)); // Save to localStorage
 
   renderCalendar();
   document.getElementById("event-form").reset();
