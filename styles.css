@@ -8,27 +8,39 @@ body {
     font-family: 'Arial', sans-serif;
     background-color: #f9e7f7; /* Soft pink background */
     height: 100vh;
-    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+}
+
+.heart-container {
     position: relative;
+    width: 400px;
+    height: 400px;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    background-color: #ffffff; /* White background for the heart */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
 .container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     text-align: center;
     z-index: 2;
-    position: relative;
 }
 
 h1 {
-    font-size: 4rem;
+    font-size: 2rem;
     color: #ff6f61; /* Soft red color */
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .snoopy img {
-    width: 200px;
+    width: 100px;
     margin-top: 20px;
     animation: float 3s ease-in-out infinite;
 }
@@ -38,7 +50,7 @@ h1 {
         transform: translateY(0);
     }
     50% {
-        transform: translateY(-20px);
+        transform: translateY(-10px);
     }
 }
 
@@ -86,8 +98,21 @@ h1 {
         transform: translateY(-10%) translateX(0) rotate(-45deg);
         opacity: 1;
     }
+    80% {
+        transform: translateY(70vh) translateX(randomX()) rotate(-45deg);
+        opacity: 1;
+    }
     100% {
-        transform: translateY(110vh) translateX(100vw) rotate(-45deg);
-        opacity: 0.5;
+        transform: translateY(80vh) translateX(randomX()) rotate(-45deg);
+        opacity: 0;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
     }
 }
