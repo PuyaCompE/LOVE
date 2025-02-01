@@ -1,12 +1,16 @@
-const GITHUB_TOKEN = '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';
+// Constants
+const GITHUB_TOKEN = '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';
 const REPO_OWNER = 'PuyaCompE';
 const REPO_NAME = 'LOVE';
 const EVENTS_FILE_PATH = 'events.json';
-
 let events = {}; // Initialize events as an empty object
+let currentDate = new Date(); // Track the current date
+let selectedDate = null; // Track the currently selected date
 
+// Fetch events from GitHub
 async function fetchEvents() {
   const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${EVENTS_FILE_PATH}`;
+  
   try {
     const response = await fetch(url, {
       headers: {
@@ -14,12 +18,13 @@ async function fetchEvents() {
         'Accept': 'application/vnd.github.v3+json'
       }
     });
-    const data = await response.json();
 
-    if (data.content) {
-      events = JSON.parse(atob(data.content)); // Decode base64 content
+    if (response.status === 404) {
+      console.log('File does not exist. Creating a new one.');
+      events = {}; // Initialize as empty
     } else {
-      events = {}; // Initialize as empty if no content exists
+      const data = await response.json();
+      events = JSON.parse(atob(data.content)); // Decode Base64 content
     }
   } catch (error) {
     console.error('Error fetching events from GitHub:', error);
@@ -30,6 +35,7 @@ async function fetchEvents() {
   renderCalendar(); // Render the calendar after fetching events
 }
 
+// Save events to GitHub
 async function saveEvents() {
   const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${EVENTS_FILE_PATH}`;
   
@@ -41,14 +47,25 @@ async function saveEvents() {
         'Accept': 'application/vnd.github.v3+json'
       }
     });
-    const data = await response.json();
-    const sha = data.sha; // Get the current SHA of the file
+
+    let sha = null;
+
+    if (response.status === 200) {
+      // File exists, use its SHA
+      const data = await response.json();
+      sha = data.sha;
+    } else if (response.status === 404) {
+      // File does not exist, no SHA needed
+      console.log('File does not exist. Creating a new one.');
+    } else {
+      throw new Error(`Unexpected status code: ${response.status}`);
+    }
 
     // Prepare the new content
-    const content = btoa(JSON.stringify(events)); // Encode to base64
+    const content = btoa(JSON.stringify(events)); // Encode to Base64
     const commitMessage = 'Update events';
 
-    // Update the file with the new content
+    // Update or create the file
     await fetch(url, {
       method: 'PUT',
       headers: {
@@ -59,7 +76,7 @@ async function saveEvents() {
       body: JSON.stringify({
         message: commitMessage,
         content: content,
-        sha: sha // Include the SHA to overwrite the existing file
+        sha: sha // Include SHA only if the file exists
       })
     });
 
@@ -69,28 +86,7 @@ async function saveEvents() {
   }
 }
 
-// Fetch events when the page loads
-fetchEvents();
-
-// Existing checkbox logic
-function check() {
-  if (
-    document.forms[0].elements[0].checked == true &&
-    document.forms[0].elements[1].checked == true &&
-    document.forms[0].elements[2].checked == true
-  ) {
-    if (!$('.wrapper').hasClass('throb')) {
-      $('.wrapper').addClass('throb');
-    }
-  } else {
-    if ($('.wrapper').hasClass('throb')) {
-      $('.wrapper').removeClass('throb');
-    }
-  }
-}
-
 // Calendar functionality
-let currentDate = new Date();
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const calendarDays = document.querySelector(".calendar-days");
 const currentMonthElement = document.getElementById("current-month");
@@ -98,43 +94,41 @@ const prevMonthButton = document.getElementById("prev-month");
 const nextMonthButton = document.getElementById("next-month");
 const eventInfo = document.getElementById("event-info");
 
-let selectedDate = null; // Track the currently selected date
-
-// Function to render the calendar and auto-select the current date
+// Render the calendar
 function renderCalendar() {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   currentMonthElement.textContent = `${new Intl.DateTimeFormat('en-US', { month: 'long' }).format(currentDate)} ${year}`;
   calendarDays.innerHTML = "";
+
   const firstDayOfMonth = new Date(year, month, 1);
   const lastDayOfMonth = new Date(year, month + 1, 0);
 
-  // Get the current date in PST
-  const pstDate = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-  const pstYear = new Date(pstDate).getFullYear();
-  const pstMonth = new Date(pstDate).getMonth() + 1; // Months are zero-indexed
-  const pstDay = new Date(pstDate).getDate();
-
+  // Add empty days for the first week
   for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
     const emptyDay = document.createElement("div");
     calendarDays.appendChild(emptyDay);
   }
 
+  // Add days of the month
   for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
     const dayElement = document.createElement("div");
     dayElement.textContent = day;
+
     const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
     if (events[dateKey]) {
       dayElement.classList.add("event-day");
       dayElement.title = events[dateKey];
     }
 
     // Highlight the current date in PST
-    if (
-      year === pstYear &&
-      month + 1 === pstMonth && // Months are zero-indexed
-      day === pstDay
-    ) {
+    const pstDate = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+    const pstYear = new Date(pstDate).getFullYear();
+    const pstMonth = new Date(pstDate).getMonth() + 1; // Months are zero-indexed
+    const pstDay = new Date(pstDate).getDate();
+
+    if (year === pstYear && month + 1 === pstMonth && day === pstDay) {
       dayElement.classList.add("current-date");
     }
 
@@ -159,6 +153,8 @@ function renderCalendar() {
     eventInfo.textContent = events[currentDateKey] || "No events on this day.";
   }
 }
+
+// Month navigation
 prevMonthButton.addEventListener("click", () => {
   currentDate.setMonth(currentDate.getMonth() - 1); // Move to the previous month
   renderCalendar(); // Re-render the calendar
@@ -168,27 +164,35 @@ nextMonthButton.addEventListener("click", () => {
   currentDate.setMonth(currentDate.getMonth() + 1); // Move to the next month
   renderCalendar(); // Re-render the calendar
 });
+
 // Event Creation Form
 document.getElementById("add-food")?.addEventListener("click", async () => {
   const eventName = document.getElementById("event-name").value.trim();
-  if (!eventName || !selectedDate) return;
+  if (!eventName || !selectedDate) {
+    alert('Please enter an event name and select a date.');
+    return;
+  }
 
   events[selectedDate] = `Food: ${eventName}`;
   await saveEvents(); // Save to GitHub
   localStorage.setItem('events', JSON.stringify(events)); // Save to localStorage
-
   renderCalendar();
   document.getElementById("event-form").reset();
 });
 
 document.getElementById("add-place")?.addEventListener("click", async () => {
   const eventName = document.getElementById("event-name").value.trim();
-  if (!eventName || !selectedDate) return;
+  if (!eventName || !selectedDate) {
+    alert('Please enter an event name and select a date.');
+    return;
+  }
 
   events[selectedDate] = `Place: ${eventName}`;
   await saveEvents(); // Save to GitHub
   localStorage.setItem('events', JSON.stringify(events)); // Save to localStorage
-
   renderCalendar();
   document.getElementById("event-form").reset();
 });
+
+// Fetch events when the page loads
+fetchEvents();
