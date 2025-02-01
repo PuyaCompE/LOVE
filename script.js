@@ -1,4 +1,4 @@
-const GITHUB_TOKEN = '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';
+const GITHUB_TOKEN = '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';
 const REPO_OWNER = 'PuyaCompE';
 const REPO_NAME = 'LOVE';
 const EVENTS_FILE_PATH = 'events.json';
