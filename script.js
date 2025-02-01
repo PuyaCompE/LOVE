@@ -3,13 +3,14 @@ const GITHUB_TOKEN = 'github_pat_11BAFY2MY0T60s4HwrPuHX_62QBIztjZzkIStgXh852rUTt
 const REPO_OWNER = 'PuyaCompE';
 const REPO_NAME = 'LOVE';
 const EVENTS_FILE_PATH = 'events.json';
+
 let events = {}; // Initialize events as an empty object
 let currentDate = new Date(); // Track the current date
 let selectedDate = null; // Track the currently selected date
 
 // Fetch events from GitHub
 async function fetchEvents() {
-  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${EVENTS_FILE_PATH}`;
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${EVENTS_FILE_PATH}?t=${Date.now()}`;
   
   try {
     const response = await fetch(url, {
@@ -25,6 +26,13 @@ async function fetchEvents() {
     } else {
       const data = await response.json();
       events = JSON.parse(atob(data.content)); // Decode Base64 content
+
+      // Ensure all dates map to arrays
+      for (const date in events) {
+        if (!Array.isArray(events[date])) {
+          events[date] = [events[date]]; // Convert single entry to array
+        }
+      }
     }
   } catch (error) {
     console.error('Error fetching events from GitHub:', error);
@@ -94,7 +102,6 @@ const prevMonthButton = document.getElementById("prev-month");
 const nextMonthButton = document.getElementById("next-month");
 const eventInfo = document.getElementById("event-info");
 
-// Render the calendar
 function renderCalendar() {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -119,7 +126,7 @@ function renderCalendar() {
 
     if (events[dateKey]) {
       dayElement.classList.add("event-day");
-      dayElement.title = events[dateKey];
+      dayElement.title = events[dateKey].join("\n"); // Display all events in the tooltip
     }
 
     // Highlight the current date in PST
@@ -139,7 +146,7 @@ function renderCalendar() {
 
     dayElement.addEventListener("click", () => {
       selectedDate = dateKey; // Set the selected date
-      eventInfo.textContent = events[dateKey] || "No events on this day.";
+      eventInfo.textContent = events[dateKey] ? events[dateKey].join(", ") : "No events on this day.";
       renderCalendar(); // Re-render the calendar to update the selected date highlight
     });
 
@@ -150,7 +157,7 @@ function renderCalendar() {
   if (!selectedDate) {
     const currentDateKey = `${pstYear}-${String(pstMonth).padStart(2, '0')}-${String(pstDay).padStart(2, '0')}`;
     selectedDate = currentDateKey;
-    eventInfo.textContent = events[currentDateKey] || "No events on this day.";
+    eventInfo.textContent = events[currentDateKey] ? events[currentDateKey].join(", ") : "No events on this day.";
   }
 }
 
@@ -166,33 +173,30 @@ nextMonthButton.addEventListener("click", () => {
 });
 
 // Event Creation Form
-document.getElementById("add-food")?.addEventListener("click", async () => {
-  const eventName = document.getElementById("event-name").value.trim();
-  if (!eventName || !selectedDate) {
-    alert('Please enter an event name and select a date.');
-    return;
-  }
+function addEvent(eventType) {
+  return async () => {
+    const eventName = document.getElementById("event-name").value.trim();
+    if (!eventName || !selectedDate) {
+      alert('Please enter an event name and select a date.');
+      return;
+    }
 
-  events[selectedDate] = `Food: ${eventName}`;
-  await saveEvents(); // Save to GitHub
-  localStorage.setItem('events', JSON.stringify(events)); // Save to localStorage
-  renderCalendar();
-  document.getElementById("event-form").reset();
-});
+    // Ensure the date has an array
+    if (!events[selectedDate]) {
+      events[selectedDate] = [];
+    }
 
-document.getElementById("add-place")?.addEventListener("click", async () => {
-  const eventName = document.getElementById("event-name").value.trim();
-  if (!eventName || !selectedDate) {
-    alert('Please enter an event name and select a date.');
-    return;
-  }
+    // Add the new event
+    events[selectedDate].push(`${eventType}: ${eventName}`);
+    await saveEvents(); // Save to GitHub
+    localStorage.setItem('events', JSON.stringify(events)); // Save to localStorage
+    renderCalendar();
+    document.getElementById("event-form").reset();
+  };
+}
 
-  events[selectedDate] = `Place: ${eventName}`;
-  await saveEvents(); // Save to GitHub
-  localStorage.setItem('events', JSON.stringify(events)); // Save to localStorage
-  renderCalendar();
-  document.getElementById("event-form").reset();
-});
+document.getElementById("add-food")?.addEventListener("click", addEvent("Food"));
+document.getElementById("add-place")?.addEventListener("click", addEvent("Place"));
 
 // Fetch events when the page loads
 fetchEvents();
