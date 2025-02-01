@@ -1,5 +1,5 @@
 // Constants
-const GITHUB_TOKEN = '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';
+const GITHUB_TOKEN = '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';
 const REPO_OWNER = 'PuyaCompE';
 const REPO_NAME = 'LOVE';
 const EVENTS_FILE_PATH = 'events.json';
@@ -111,6 +111,9 @@ function renderCalendar() {
   const firstDayOfMonth = new Date(year, month, 1);
   const lastDayOfMonth = new Date(year, month + 1, 0);
 
+  console.log('First Day of Month:', firstDayOfMonth);
+  console.log('Last Day of Month:', lastDayOfMonth);
+
   // Add empty days for the first week
   for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
     const emptyDay = document.createElement("div");
@@ -163,12 +166,12 @@ function renderCalendar() {
 
 // Month navigation
 prevMonthButton.addEventListener("click", () => {
-  currentDate.setMonth(currentDate.getMonth() - 1); // Move to the previous month
+  currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1); // Reset to the first day of the previous month
   renderCalendar(); // Re-render the calendar
 });
 
 nextMonthButton.addEventListener("click", () => {
-  currentDate.setMonth(currentDate.getMonth() + 1); // Move to the next month
+  currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1); // Reset to the first day of the next month
   renderCalendar(); // Re-render the calendar
 });
 
