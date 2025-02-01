@@ -5,7 +5,6 @@ const EVENTS_FILE_PATH = 'events.json';
 
 let events = {}; // Initialize events as an empty object
 
-// Function to fetch events from GitHub
 async function fetchEvents() {
   const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${EVENTS_FILE_PATH}`;
   try {
@@ -16,45 +15,58 @@ async function fetchEvents() {
       }
     });
     const data = await response.json();
+
     if (data.content) {
       events = JSON.parse(atob(data.content)); // Decode base64 content
+    } else {
+      events = {}; // Initialize as empty if no content exists
     }
   } catch (error) {
     console.error('Error fetching events from GitHub:', error);
     // Fallback to localStorage if GitHub fetch fails
     events = JSON.parse(localStorage.getItem('events')) || {};
   }
+
   renderCalendar(); // Render the calendar after fetching events
 }
 
-// Function to save events to GitHub
 async function saveEvents() {
   const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${EVENTS_FILE_PATH}`;
-  const response = await fetch(url, {
-    headers: {
-      'Authorization': `token ${GITHUB_TOKEN}`,
-      'Accept': 'application/vnd.github.v3+json'
-    }
-  });
-  const data = await response.json();
-  const sha = data.sha;
+  
+  try {
+    // Fetch the current file to get its SHA
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `token ${GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    const data = await response.json();
+    const sha = data.sha; // Get the current SHA of the file
 
-  const content = btoa(JSON.stringify(events)); // Encode to base64
-  const commitMessage = 'Update events';
+    // Prepare the new content
+    const content = btoa(JSON.stringify(events)); // Encode to base64
+    const commitMessage = 'Update events';
 
-  await fetch(url, {
-    method: 'PUT',
-    headers: {
-      'Authorization': `token ${GITHUB_TOKEN}`,
-      'Accept': 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      message: commitMessage,
-      content: content,
-      sha: sha
-    })
-  });
+    // Update the file with the new content
+    await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: commitMessage,
+        content: content,
+        sha: sha // Include the SHA to overwrite the existing file
+      })
+    });
+
+    console.log('Events saved successfully.');
+  } catch (error) {
+    console.error('Error saving events to GitHub:', error);
+  }
 }
 
 // Fetch events when the page loads
@@ -147,7 +159,15 @@ function renderCalendar() {
     eventInfo.textContent = events[currentDateKey] || "No events on this day.";
   }
 }
+prevMonthButton.addEventListener("click", () => {
+  currentDate.setMonth(currentDate.getMonth() - 1); // Move to the previous month
+  renderCalendar(); // Re-render the calendar
+});
 
+nextMonthButton.addEventListener("click", () => {
+  currentDate.setMonth(currentDate.getMonth() + 1); // Move to the next month
+  renderCalendar(); // Re-render the calendar
+});
 // Event Creation Form
 document.getElementById("add-food")?.addEventListener("click", async () => {
   const eventName = document.getElementById("event-name").value.trim();
