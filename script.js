@@ -1,5 +1,5 @@
 // Constants
-const GITHUB_TOKEN = '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';
+const GITHUB_TOKEN = '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';
 const REPO_OWNER = 'PuyaCompE';
 const REPO_NAME = 'LOVE';
 const EVENTS_FILE_PATH = 'events.json';
