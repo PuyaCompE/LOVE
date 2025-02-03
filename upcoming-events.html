@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upcoming Events</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        /* Navigation Bar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #e74c3c;
+            padding: 10px 20px;
+            color: #fff;
+        }
+        .navbar h1 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        .navbar a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 1rem;
+            padding: 10px 15px;
+            border-radius: 5px;
+            background-color: #c0392b;
+            transition: background-color 0.3s ease;
+        }
+        .navbar a:hover {
+            background-color: #a52a21;
+        }
+        /* Event Creation Form */
+        .event-form-container {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        .event-form-container h2 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #e74c3c;
+        }
+        .event-form-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .event-form-container input,
+        .event-form-container select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .event-form-container button {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .event-form-container button:hover {
+            background-color: #c0392b;
+        }
+        /* Week View */
+        .week-view {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .week-view h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #e74c3c;
+        }
+        .day-column {
+            margin-bottom: 20px;
+        }
+        .day-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .event-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .event-list li {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <h1>Upcoming Events</h1>
+        <a href="index.html">Back to Home</a>
+    </div>
+
+    <!-- Event Creation Form -->
+    <div class="event-form-container">
+        <h2>Create a New Event</h2>
+        <form id="event-form">
+            <label for="event-name">Event Name:</label>
+            <input type="text" id="event-name" placeholder="Enter event name" required>
+            <label for="event-date">Date:</label>
+            <input type="date" id="event-date" required>
+            <button type="submit">Add Event</button>
+        </form>
+    </div>
+
+    <!-- Week View -->
+    <div class="week-view">
+        <h2>This Week's Events</h2>
+        <div id="week-days"></div>
+    </div>
+
+    <!-- Script -->
+    <script>
+        // Constants
+        const GITHUB_TOKEN = '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';
+        const REPO_OWNER = 'PuyaCompE';
+        const REPO_NAME = 'LOVE';
+        const EVENTS_FILE_PATH = 'events.json';
+
+        let events = {};
+
+        // Fetch events from GitHub
+        async function fetchEvents() {
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${EVENTS_FILE_PATH}?t=${Date.now()}`;
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                if (response.status === 404) {
+                    console.log('File does not exist. Creating a new one.');
+                    events = {};
+                } else {
+                    const data = await response.json();
+                    events = JSON.parse(atob(data.content));
+                    for (const date in events) {
+                        if (!Array.isArray(events[date])) {
+                            events[date] = [events[date]];
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching events:', error);
+                events = JSON.parse(localStorage.getItem('events')) || {};
+            }
+        }
+
+        // Save events to GitHub
+        async function saveEvents() {
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${EVENTS_FILE_PATH}`;
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                let sha = null;
+                if (response.status === 200) {
+                    const data = await response.json();
+                    sha = data.sha;
+                }
+                const content = btoa(JSON.stringify(events));
+                await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Update events',
+                        content: content,
+                        sha: sha
+                    })
+                });
+                console.log('Events saved successfully.');
+            } catch (error) {
+                console.error('Error saving events:', error);
+            }
+        }
+
+        // Render this week's events
+        function renderWeekView() {
+            const today = new Date();
+            const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 1)); // Monday
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(endOfWeek.getDate() + 4); // Friday
+
+            const weekDaysElement = document.getElementById('week-days');
+            weekDaysElement.innerHTML = '';
+
+            for (let day = new Date(startOfWeek); day <= endOfWeek; day.setDate(day.getDate() + 1)) {
+                const dateKey = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
+                const dayName = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'][new Date(day).getDay() - 1];
+
+                const dayColumn = document.createElement('div');
+                dayColumn.classList.add('day-column');
+
+                const dayHeader = document.createElement('h3');
+                dayHeader.textContent = `${dayName}, ${day.getDate()}/${day.getMonth() + 1}`;
+                dayColumn.appendChild(dayHeader);
+
+                const eventList = document.createElement('ul');
+                eventList.classList.add('event-list');
+
+                if (events[dateKey]) {
+                    events[dateKey].forEach(event => {
+                        const eventItem = document.createElement('li');
+                        eventItem.textContent = event;
+                        eventList.appendChild(eventItem);
+                    });
+                } else {
+                    const noEvents = document.createElement('li');
+                    noEvents.textContent = 'No events';
+                    eventList.appendChild(noEvents);
+                }
+
+                dayColumn.appendChild(eventList);
+                weekDaysElement.appendChild(dayColumn);
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('event-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const eventName = document.getElementById('event-name').value.trim();
+            const eventDate = document.getElementById('event-date').value;
+
+            if (!eventName || !eventDate) {
+                alert('Please enter both event name and date.');
+                return;
+            }
+
+            const dateKey = eventDate;
+            if (!events[dateKey]) {
+                events[dateKey] = [];
+            }
+            events[dateKey].push(eventName);
+
+            await saveEvents();
+            document.getElementById('event-form').reset();
+            renderWeekView();
+        });
+
+        // Initialize
+        async function init() {
+            await fetchEvents();
+            renderWeekView();
+        }
+
+        init();
+    </script>
+</body>
+</html>
