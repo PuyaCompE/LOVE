@@ -110,7 +110,7 @@ function renderCalendar() {
 
   const firstDayOfMonth = new Date(year, month, 1);
   const lastDayOfMonth = new Date(year, month + 1, 0);
-
+  
   console.log('First Day of Month:', firstDayOfMonth);
   console.log('Last Day of Month:', lastDayOfMonth);
 
@@ -164,7 +164,6 @@ function renderCalendar() {
   }
 }
 
-// Month navigation
 prevMonthButton.addEventListener("click", () => {
   currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1); // Reset to the first day of the previous month
   renderCalendar(); // Re-render the calendar
