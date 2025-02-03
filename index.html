@@ -37,7 +37,54 @@
         .navbar a:hover {
             background-color: #a52a21;
         }
-
+        /* Dashboard Section */
+        .dashboard {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #fff;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .dashboard-item {
+            text-align: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .dashboard-item:hover {
+            background-color: #f0f0f0;
+        }
+        .dashboard-item h3 {
+            font-size: 1rem;
+            margin: 0;
+            color: #e74c3c;
+        }
+        .dashboard-item p {
+            font-size: 0.9rem;
+            margin: 5px 0 0;
+            color: #666;
+        }
+        .notification-alert {
+            position: relative;
+        }
+        .notification-alert::after {
+            content: '!';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: red;
+            color: white;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+        }
         /* Container */
         .container {
             max-width: 600px;
@@ -69,7 +116,7 @@
         .heart {
             color: #e74c3c;
             font-size: 2rem;
-            animation: beat 1s infinite;
+            animation: beat 5s infinite;
             text-align: center; /* Center the heart */
         }
         @keyframes beat {
@@ -85,6 +132,22 @@
         <a href="calendar.html">View Our Memories</a>
     </div>
 
+    <!-- Dashboard Section -->
+    <div class="dashboard">
+        <div class="dashboard-item" onclick="alert('Redirecting to Upcoming Events...')">
+            <h3>Upcoming Events</h3>
+            <p>Click to view events</p>
+        </div>
+        <div class="dashboard-item notification-alert" onclick="alert('You have 1 new notification!')">
+            <h3>Notifications</h3>
+            <p>New message</p>
+        </div>
+        <div class="dashboard-item" onclick="alert('Today is ' + new Date().toLocaleDateString())">
+            <h3>Today's Date</h3>
+            <p id="current-date"></p>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <div class="container">
         <div class="heart"><h1>Happy 1 Year Anniversary ❤️</h1></div>
@@ -95,5 +158,13 @@
         <p>Bear</p>
         <img src="snoopy.gif" alt="Our Photo">
     </div>
+
+    <!-- Script for Today's Date -->
+    <script>
+        // Display today's date dynamically
+        const currentDateElement = document.getElementById('current-date');
+        const today = new Date();
+        currentDateElement.textContent = today.toLocaleDateString();
+    </script>
 </body>
 </html>
