@@ -222,27 +222,30 @@
         // Render this week's events (Mon-Sun)
         function renderWeekView() {
             const today = new Date();
-            const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 1)); // Monday
+            const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay())); // Sunday
             const endOfWeek = new Date(startOfWeek);
-            endOfWeek.setDate(endOfWeek.getDate() + 6); // Sunday
-
+            endOfWeek.setDate(endOfWeek.getDate() + 6); // Saturday
+        
             const weekDaysElement = document.getElementById('week-days');
             weekDaysElement.innerHTML = '';
-
+        
+            // Correctly map day names to match getDay() values
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        
             for (let day = new Date(startOfWeek); day <= endOfWeek; day.setDate(day.getDate() + 1)) {
                 const dateKey = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
-                const dayName = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][new Date(day).getDay() - 1];
-
+                const dayName = dayNames[day.getDay()]; // Use getDay() directly to index the array
+        
                 const dayColumn = document.createElement('div');
                 dayColumn.classList.add('day-column');
-
+        
                 const dayHeader = document.createElement('h3');
                 dayHeader.textContent = `${dayName}, ${day.getDate()}/${day.getMonth() + 1}`;
                 dayColumn.appendChild(dayHeader);
-
+        
                 const eventList = document.createElement('ul');
                 eventList.classList.add('event-list');
-
+        
                 if (events[dateKey]) {
                     events[dateKey].forEach(event => {
                         const eventItem = document.createElement('li');
@@ -254,7 +257,7 @@
                     noEvents.textContent = 'No events';
                     eventList.appendChild(noEvents);
                 }
-
+        
                 dayColumn.appendChild(eventList);
                 weekDaysElement.appendChild(dayColumn);
             }
