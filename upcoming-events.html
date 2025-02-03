@@ -180,75 +180,50 @@
     </div>
 
     <!-- Script -->
-    <script>
-        // Constants
-        const GITHUB_TOKEN = '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';
-        const REPO_OWNER = 'PuyaCompE';
-        const REPO_NAME = 'LOVE';
-        const EVENTS_FILE_PATH = 'events.json';
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-        let events = {};
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDCzHrkRrUbLEnjy-mHa1fOW6HXq8b5AUU",
+            authDomain: "test-mode-5c0be.firebaseapp.com",
+            databaseURL: "https://test-mode-5c0be-default-rtdb.firebaseio.com",
+            projectId: "test-mode-5c0be",
+            storageBucket: "test-mode-5c0be.firebasestorage.app",
+            messagingSenderId: "294518491210",
+            appId: "1:294518491210:web:b48ec4c8230fef33bafeb3",
+            measurementId: "G-EJLNLYEXPS"
+        };
 
-        // Fetch events from GitHub
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let events = {}; // Temporary local storage for events
+
+        // Fetch events from Realtime Database
         async function fetchEvents() {
-            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${EVENTS_FILE_PATH}?t=${Date.now()}`;
             try {
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
+                const eventsRef = ref(db, "events");
+                onValue(eventsRef, (snapshot) => {
+                    events = snapshot.val() || {};
+                    console.log('Fetched events:', events);
+                    renderWeekView();
                 });
-                if (response.status === 404) {
-                    console.log('File does not exist. Creating a new one.');
-                    events = {};
-                } else {
-                    const data = await response.json();
-                    events = JSON.parse(atob(data.content));
-                    for (const date in events) {
-                        if (!Array.isArray(events[date])) {
-                            events[date] = [events[date]];
-                        }
-                    }
-                }
             } catch (error) {
                 console.error('Error fetching events:', error);
-                events = JSON.parse(localStorage.getItem('events')) || {};
             }
         }
 
-        // Save events to GitHub
-        async function saveEvents() {
-            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${EVENTS_FILE_PATH}`;
+        // Save events to Realtime Database
+        async function saveEvents(dateKey, eventDescription) {
             try {
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-                let sha = null;
-                if (response.status === 200) {
-                    const data = await response.json();
-                    sha = data.sha;
-                }
-                const content = btoa(JSON.stringify(events));
-                await fetch(url, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: 'Update events',
-                        content: content,
-                        sha: sha
-                    })
-                });
-                console.log('Events saved successfully.');
+                await set(ref(db, `events/${dateKey}`), eventDescription);
+                console.log('Event saved successfully.');
             } catch (error) {
-                console.error('Error saving events:', error);
+                console.error('Error saving event:', error);
             }
         }
 
@@ -262,12 +237,11 @@
             const weekDaysElement = document.getElementById('week-days');
             weekDaysElement.innerHTML = '';
 
-            // Correctly map day names to match getDay() values
             const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
             for (let day = new Date(startOfWeek); day <= endOfWeek; day.setDate(day.getDate() + 1)) {
                 const dateKey = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
-                const dayName = dayNames[day.getDay()]; // Use getDay() directly to index the array
+                const dayName = dayNames[day.getDay()];
 
                 const dayColumn = document.createElement('div');
                 dayColumn.classList.add('day-column');
@@ -308,23 +282,15 @@
             }
 
             const dateKey = eventDate;
-            if (!events[dateKey]) {
-                events[dateKey] = [];
-            }
-            events[dateKey].push(eventName);
+            const eventDescription = events[dateKey] ? [...events[dateKey], eventName] : [eventName];
+            events[dateKey] = eventDescription;
 
-            await saveEvents();
+            await saveEvents(dateKey, eventDescription);
             document.getElementById('event-form').reset();
-            renderWeekView();
         });
 
         // Initialize
-        async function init() {
-            await fetchEvents();
-            renderWeekView();
-        }
-
-        init();
+        fetchEvents();
     </script>
 </body>
 </html>
