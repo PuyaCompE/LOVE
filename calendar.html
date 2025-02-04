@@ -124,6 +124,10 @@
       position: relative;
     }
 
+    .calendar-days div.selected-day {
+      background-color: #add8e6; /* Light blue background for selected day */
+    }
+
     .calendar-days div.event-day::after {
       content: '•';
       color: red;
@@ -131,24 +135,6 @@
       position: absolute;
       bottom: 5px;
       right: 5px;
-    }
-
-    /* Hover Details Box */
-    .hover-details {
-      display: none;
-      position: absolute;
-      top: 50%;
-      left: 110%;
-      transform: translateY(-50%);
-      background-color: #fff;
-      padding: 10px;
-      border-radius: 5px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      z-index: 10;
-    }
-
-    .calendar-days div:hover .hover-details {
-      display: block;
     }
   </style>
 </head>
@@ -211,6 +197,7 @@
 
     let eventsCal = {}; // Temporary local storage for logs
     let currentDate = new Date(); // Track the current date
+    let selectedDate = null; // Track the currently selected date
 
     // Fetch logs from Firebase Realtime Database
     async function fetchLogs() {
@@ -266,13 +253,25 @@
         const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         if (eventsCal[dateKey]) {
           dayElement.classList.add("event-day");
-
-          // Add hover details box
-          const hoverDetails = document.createElement("div");
-          hoverDetails.classList.add("hover-details");
-          hoverDetails.textContent = eventsCal[dateKey].join("\n");
-          dayElement.appendChild(hoverDetails);
         }
+
+        // Highlight the selected day
+        if (selectedDate === dateKey) {
+          dayElement.classList.add("selected-day");
+        }
+
+        // Add click event to select the day
+        dayElement.addEventListener("click", () => {
+          selectedDate = dateKey;
+
+          // Remove "selected-day" class from all days
+          document.querySelectorAll(".calendar-days div").forEach((dayDiv) => {
+            dayDiv.classList.remove("selected-day");
+          });
+
+          // Add "selected-day" class to the clicked day
+          dayElement.classList.add("selected-day");
+        });
 
         calendarDays.appendChild(dayElement);
       }
@@ -296,8 +295,11 @@
         alert('Please enter a log name.');
         return;
       }
-      const dateKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
-      saveLog(dateKey, "Food", logName);
+      if (!selectedDate) {
+        alert('Please select a day to add the log.');
+        return;
+      }
+      saveLog(selectedDate, "Food", logName);
       document.getElementById("log-name").value = "";
       fetchLogs();
     });
@@ -308,8 +310,11 @@
         alert('Please enter a log name.');
         return;
       }
-      const dateKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
-      saveLog(dateKey, "Place", logName);
+      if (!selectedDate) {
+        alert('Please select a day to add the log.');
+        return;
+      }
+      saveLog(selectedDate, "Place", logName);
       document.getElementById("log-name").value = "";
       fetchLogs();
     });
