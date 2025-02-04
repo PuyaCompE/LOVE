@@ -127,14 +127,22 @@
     .calendar-days div.selected-day {
       background-color: #add8e6; /* Light blue background for selected day */
     }
-
+    
+    .calendar-days div:hover {
+      background: #ffcccc;
+    }
+   /* Snoopy Emoji Indicator */
     .calendar-days div.event-day::after {
-      content: '•';
-      color: red;
-      font-size: 1.5rem;
+      content: "";
       position: absolute;
       bottom: 5px;
       right: 5px;
+      width: 32px;
+      height: 32px;
+      background-image: url('snoopemoji.png'); /* Snoopy emoji image */
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
     }
 
     /* Detail Box */
