@@ -136,6 +136,30 @@
       bottom: 5px;
       right: 5px;
     }
+
+    /* Detail Box */
+    .detail-box {
+      display: none; /* Initially hidden */
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .detail-box h3 {
+      margin: 0 0 10px;
+      color: #e74c3c;
+    }
+
+    .detail-box ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .detail-box li {
+      margin-bottom: 5px;
+    }
   </style>
 </head>
 <body>
@@ -169,6 +193,11 @@
       </div>
       <div class="calendar-days" id="calendar-days">
         <!-- Days will be dynamically generated -->
+      </div>
+      <!-- Detail Box -->
+      <div class="detail-box" id="detail-box">
+        <h3>Details:</h3>
+        <ul id="log-details"></ul>
       </div>
     </div>
   </div>
@@ -230,6 +259,8 @@
     const currentMonthElement = document.getElementById("current-month");
     const prevMonthButton = document.getElementById("prev-month");
     const nextMonthButton = document.getElementById("next-month");
+    const detailBox = document.getElementById("detail-box");
+    const logDetails = document.getElementById("log-details");
 
     function renderCalendar() {
       const year = currentDate.getFullYear();
@@ -260,7 +291,7 @@
           dayElement.classList.add("selected-day");
         }
 
-        // Add click event to select the day
+        // Add click event to select the day and show details
         dayElement.addEventListener("click", () => {
           selectedDate = dateKey;
 
@@ -271,6 +302,19 @@
 
           // Add "selected-day" class to the clicked day
           dayElement.classList.add("selected-day");
+
+          // Show or hide the detail box based on logs
+          if (eventsCal[dateKey]) {
+            detailBox.style.display = "block"; // Make detail box visible
+            logDetails.innerHTML = ""; // Clear previous details
+            eventsCal[dateKey].forEach((log) => {
+              const listItem = document.createElement("li");
+              listItem.textContent = log;
+              logDetails.appendChild(listItem);
+            });
+          } else {
+            detailBox.style.display = "none"; // Hide detail box if no logs
+          }
         });
 
         calendarDays.appendChild(dayElement);
