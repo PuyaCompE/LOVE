@@ -4,7 +4,137 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Our Memories</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #e74c3c;
+      padding: 10px 20px;
+      color: #fff;
+    }
+
+    .navbar h1 {
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .navbar a {
+      text-decoration: none;
+      color: #fff;
+      font-size: 1rem;
+      padding: 10px 15px;
+      border-radius: 5px;
+      background-color: #c0392b;
+      transition: background-color 0.3s ease;
+    }
+
+    .navbar a:hover {
+      background-color: #a52a21;
+    }
+
+    /* Event Creation Form */
+    .event-form-container {
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin: 20px;
+    }
+
+    .event-form-container h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #e74c3c;
+    }
+
+    .event-form-container label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .event-form-container input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .event-type-buttons button {
+      margin: 5px;
+      padding: 10px 15px;
+      background-color: #e74c3c;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .event-type-buttons button:hover {
+      background-color: #c0392b;
+    }
+
+    /* Calendar Container */
+    .calendar-container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+
+    .calendar-days div {
+      text-align: center;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .calendar-days div.event-day {
+      background-color: #e74c3c;
+      color: #fff;
+    }
+
+    .calendar-days div.selected-date {
+      background-color: #3498db;
+      color: #fff;
+    }
+
+    /* Event Details */
+    .event-details {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  </style>
 </head>
 <body>
   <!-- Navigation Bar -->
@@ -38,7 +168,6 @@
         <!-- Days will be dynamically generated -->
       </div>
     </div>
-
     <!-- Event Details -->
     <div class="event-details">
       <h2>Details:</h2>
@@ -47,6 +176,137 @@
   </main>
 
   <!-- Script -->
-  <script src="script.js"></script>
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCzHrkRrUbLEnjy-mHa1fOW6HXq8b5AUU",
+      authDomain: "test-mode-5c0be.firebaseapp.com",
+      databaseURL: "https://test-mode-5c0be-default-rtdb.firebaseio.com",
+      projectId: "test-mode-5c0be",
+      storageBucket: "test-mode-5c0be.firebasestorage.app",
+      messagingSenderId: "294518491210",
+      appId: "1:294518491210:web:b48ec4c8230fef33bafeb3",
+      measurementId: "G-EJLNLYEXPS"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    let events = {}; // Temporary local storage for events
+    let currentDate = new Date(); // Track the current date
+    let selectedDate = null; // Track the currently selected date
+
+    // Fetch events from Firebase Realtime Database
+    async function fetchEvents() {
+      try {
+        const eventsRef = ref(db, "events");
+        onValue(eventsRef, (snapshot) => {
+          events = snapshot.val() || {};
+          console.log('Fetched events:', events);
+          renderCalendar();
+        });
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    }
+
+    // Save events to Firebase Realtime Database
+    async function saveEvent(dateKey, eventType, eventName) {
+      try {
+        const eventDescription = events[dateKey] ? [...events[dateKey], `${eventType}: ${eventName}`] : [`${eventType}: ${eventName}`];
+        await set(ref(db, `events/${dateKey}`), eventDescription);
+        console.log('Event saved successfully.');
+      } catch (error) {
+        console.error('Error saving event:', error);
+      }
+    }
+
+    // Calendar functionality
+    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const calendarDays = document.querySelector(".calendar-days");
+    const currentMonthElement = document.getElementById("current-month");
+    const prevMonthButton = document.getElementById("prev-month");
+    const nextMonthButton = document.getElementById("next-month");
+    const eventInfo = document.getElementById("event-info");
+
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      currentMonthElement.textContent = `${new Intl.DateTimeFormat('en-US', { month: 'long' }).format(currentDate)} ${year}`;
+      calendarDays.innerHTML = "";
+      const firstDayOfMonth = new Date(year, month, 1);
+      const lastDayOfMonth = new Date(year, month + 1, 0);
+
+      // Add empty days for the first week
+      for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
+        const emptyDay = document.createElement("div");
+        calendarDays.appendChild(emptyDay);
+      }
+
+      // Add days of the month
+      for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
+        const dayElement = document.createElement("div");
+        dayElement.textContent = day;
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        if (events[dateKey]) {
+          dayElement.classList.add("event-day");
+          dayElement.title = events[dateKey].join("\n"); // Display all events in the tooltip
+        }
+        if (selectedDate === dateKey) {
+          dayElement.classList.add("selected-date");
+        }
+        dayElement.addEventListener("click", () => {
+          selectedDate = dateKey;
+          eventInfo.textContent = events[dateKey] ? events[dateKey].join(", ") : "No events on this day.";
+          renderCalendar();
+        });
+        calendarDays.appendChild(dayElement);
+      }
+    }
+
+    // Month navigation
+    prevMonthButton.addEventListener("click", () => {
+      currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+      renderCalendar();
+    });
+
+    nextMonthButton.addEventListener("click", () => {
+      currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+      renderCalendar();
+    });
+
+    // Event Creation Form
+    document.getElementById("add-food").addEventListener("click", () => {
+      const eventName = document.getElementById("event-name").value.trim();
+      if (!eventName) {
+        alert('Please enter an event name.');
+        return;
+      }
+      const dateKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.split('-')[2]).padStart(2, '0')}`;
+      saveEvent(dateKey, "Food", eventName);
+      document.getElementById("event-name").value = "";
+      fetchEvents();
+    });
+
+    document.getElementById("add-place").addEventListener("click", () => {
+      const eventName = document.getElementById("event-name").value.trim();
+      if (!eventName) {
+        alert('Please enter an event name.');
+        return;
+      }
+      const dateKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.split('-')[2]).padStart(2, '0')}`;
+      saveEvent(dateKey, "Place", eventName);
+      document.getElementById("event-name").value = "";
+      fetchEvents();
+    });
+
+    // Fetch events when the page loads
+    fetchEvents();
+  </script>
 </body>
 </html>
