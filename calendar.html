@@ -52,7 +52,7 @@
 
     /* Create a New Log Section */
     .log-form-container {
-      width: 50%;
+      width: 30%;
       padding: 20px;
       background-color: #fff;
       border-radius: 10px;
@@ -95,11 +95,12 @@
 
     /* Calendar Container */
     .calendar-container {
-      width: 50%;
+      width: 70%;
       padding: 20px;
       background-color: #fff;
       border-radius: 10px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-left: 20px;
     }
 
     .calendar-header {
@@ -120,44 +121,34 @@
       padding: 10px;
       border-radius: 5px;
       cursor: pointer;
+      position: relative;
     }
 
-    .calendar-days div.event-day {
-      background-color: #e74c3c;
-      color: #fff;
+    .calendar-days div.event-day::after {
+      content: '•';
+      color: red;
+      font-size: 1.5rem;
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
     }
 
-    .calendar-days div.selected-date {
-      background-color: #3498db;
-      color: #fff;
-    }
-
-    /* Details Box */
-    .details-box {
-      width: 50%;
-      padding: 20px;
+    /* Hover Details Box */
+    .hover-details {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 110%;
+      transform: translateY(-50%);
       background-color: #fff;
-      border-radius: 10px;
+      padding: 10px;
+      border-radius: 5px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      margin-left: 20px;
+      z-index: 10;
     }
 
-    .details-box h2 {
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-      color: #e74c3c;
-    }
-
-    /* Snoopy Image */
-    .snoopy-image {
-      margin-top: 20px;
-      text-align: center;
-    }
-
-    .snoopy-image img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 10px;
+    .calendar-days div:hover .hover-details {
+      display: block;
     }
   </style>
 </head>
@@ -171,41 +162,28 @@
   <!-- Main Content -->
   <div class="main-content">
     <!-- Left Column -->
-    <div>
-      <!-- Create a New Log Section -->
-      <div class="log-form-container">
-        <h2>Create a New Log</h2>
-        <form id="log-form">
-          <label for="log-name">Log Name:</label>
-          <input type="text" id="log-name" placeholder="Enter log name" required>
-          <div class="event-type-buttons">
-            <button type="button" id="add-food">Food</button>
-            <button type="button" id="add-place">Place</button>
-          </div>
-        </form>
-        <!-- Snoopy Image -->
-        <div class="snoopy-image">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Snoopy_Peanuts.png/640px-Snoopy_Peanuts.png" alt="Snoopy">
+    <div class="log-form-container">
+      <h2>Create a New Log</h2>
+      <form id="log-form">
+        <label for="log-name">Log Name:</label>
+        <input type="text" id="log-name" placeholder="Enter log name" required>
+        <div class="event-type-buttons">
+          <button type="button" id="add-food">Food</button>
+          <button type="button" id="add-place">Place</button>
         </div>
-      </div>
-
-      <!-- Calendar -->
-      <div class="calendar-container">
-        <div class="calendar-header">
-          <button id="prev-month">❮</button>
-          <h2 id="current-month">January 2025</h2>
-          <button id="next-month">❯</button>
-        </div>
-        <div class="calendar-days">
-          <!-- Days will be dynamically generated -->
-        </div>
-      </div>
+      </form>
     </div>
 
     <!-- Right Column -->
-    <div class="details-box">
-      <h2>Details:</h2>
-      <p id="log-info">No logs on this day.</p>
+    <div class="calendar-container">
+      <div class="calendar-header">
+        <button id="prev-month">❮</button>
+        <h2 id="current-month">January 2025</h2>
+        <button id="next-month">❯</button>
+      </div>
+      <div class="calendar-days" id="calendar-days">
+        <!-- Days will be dynamically generated -->
+      </div>
     </div>
   </div>
 
@@ -231,14 +209,13 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    let eventsCal = {}; // Temporary local storage for logs (renamed from 'events' to 'eventsCal')
+    let eventsCal = {}; // Temporary local storage for logs
     let currentDate = new Date(); // Track the current date
-    let selectedDate = null; // Track the currently selected date
 
-    // Fetch logs from Firebase Realtime Database (using 'events-cal' node)
+    // Fetch logs from Firebase Realtime Database
     async function fetchLogs() {
       try {
-        const logsRef = ref(db, "events-cal"); // Changed from 'events' to 'events-cal'
+        const logsRef = ref(db, "events-cal");
         onValue(logsRef, (snapshot) => {
           eventsCal = snapshot.val() || {};
           console.log('Fetched logs:', eventsCal);
@@ -249,11 +226,11 @@
       }
     }
 
-    // Save logs to Firebase Realtime Database (using 'events-cal' node)
+    // Save logs to Firebase Realtime Database
     async function saveLog(dateKey, logType, logName) {
       try {
         const logDescription = eventsCal[dateKey] ? [...eventsCal[dateKey], `${logType}: ${logName}`] : [`${logType}: ${logName}`];
-        await set(ref(db, `events-cal/${dateKey}`), logDescription); // Changed from 'events' to 'events-cal'
+        await set(ref(db, `events-cal/${dateKey}`), logDescription);
         console.log('Log saved successfully.');
       } catch (error) {
         console.error('Error saving log:', error);
@@ -262,11 +239,10 @@
 
     // Calendar functionality
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const calendarDays = document.querySelector(".calendar-days");
+    const calendarDays = document.getElementById("calendar-days");
     const currentMonthElement = document.getElementById("current-month");
     const prevMonthButton = document.getElementById("prev-month");
     const nextMonthButton = document.getElementById("next-month");
-    const logInfo = document.getElementById("log-info");
 
     function renderCalendar() {
       const year = currentDate.getFullYear();
@@ -286,19 +262,18 @@
       for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
         const dayElement = document.createElement("div");
         dayElement.textContent = day;
+
         const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         if (eventsCal[dateKey]) {
           dayElement.classList.add("event-day");
-          dayElement.title = eventsCal[dateKey].join("\n"); // Display all logs in the tooltip
+
+          // Add hover details box
+          const hoverDetails = document.createElement("div");
+          hoverDetails.classList.add("hover-details");
+          hoverDetails.textContent = eventsCal[dateKey].join("\n");
+          dayElement.appendChild(hoverDetails);
         }
-        if (selectedDate === dateKey) {
-          dayElement.classList.add("selected-date");
-        }
-        dayElement.addEventListener("click", () => {
-          selectedDate = dateKey;
-          logInfo.textContent = eventsCal[dateKey] ? eventsCal[dateKey].join(", ") : "No logs on this day.";
-          renderCalendar();
-        });
+
         calendarDays.appendChild(dayElement);
       }
     }
@@ -321,7 +296,7 @@
         alert('Please enter a log name.');
         return;
       }
-      const dateKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.split('-')[2]).padStart(2, '0')}`;
+      const dateKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
       saveLog(dateKey, "Food", logName);
       document.getElementById("log-name").value = "";
       fetchLogs();
@@ -333,7 +308,7 @@
         alert('Please enter a log name.');
         return;
       }
-      const dateKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.split('-')[2]).padStart(2, '0')}`;
+      const dateKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
       saveLog(dateKey, "Place", logName);
       document.getElementById("log-name").value = "";
       fetchLogs();
