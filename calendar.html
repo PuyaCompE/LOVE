@@ -188,6 +188,8 @@
         <div class="event-type-buttons">
           <button type="button" id="add-food">Food</button>
           <button type="button" id="add-place">Place</button>
+          <button type="button" id="add-coffee">Coffee</button> <!-- New Button -->
+          <button type="button" id="add-bday">Birthday</button> <!-- New Button -->
         </div>
       </form>
     </div>
@@ -371,6 +373,37 @@
       fetchLogs();
     });
 
+    // Add Coffee button functionality
+    document.getElementById("add-coffee").addEventListener("click", () => {
+      const logName = document.getElementById("log-name").value.trim();
+      if (!logName) {
+        alert('Please enter a log name.');
+        return;
+      }
+      if (!selectedDate) {
+        alert('Please select a day to add the log.');
+        return;
+      }
+      saveLog(selectedDate, "Coffee", logName); // Save the log with type "Coffee"
+      document.getElementById("log-name").value = ""; // Clear the input field
+      fetchLogs(); // Refresh the calendar
+    });
+
+    // Add Bday button functionality
+    document.getElementById("add-bday").addEventListener("click", () => {
+      const logName = document.getElementById("log-name").value.trim();
+      if (!logName) {
+        alert('Please enter a log name.');
+        return;
+      }
+      if (!selectedDate) {
+        alert('Please select a day to add the log.');
+        return;
+      }
+      saveLog(selectedDate, "Birthday", logName); // Save the log with type "Coffee"
+      document.getElementById("log-name").value = ""; // Clear the input field
+      fetchLogs(); // Refresh the calendar
+    });
     // Fetch logs when the page loads
     fetchLogs();
   </script>
