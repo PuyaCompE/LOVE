@@ -51,14 +51,23 @@
         }
 
         /* Week View */
-        .week-view {
+        .week-view,
+        .event-form-container{
+            flex: 1; /* Both boxes take up equal space */
+            min-height: 300px; /* Set a minimum height to ensure consistency */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Align content evenly within each box */
             margin-bottom: 20px;
             padding: 20px;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
         }
-        .week-view h2 {
+        .week-view h2,
+        .event-form-container h2 {
+            margin-bottom: 15px;
             font-size: 1.0rem;
             margin-bottom: 15px;
             color: #e74c3c;
@@ -124,6 +133,12 @@
         }
         .event-form-container button:hover {
             background-color: #c0392b;
+        }
+        .event-form-container form {
+            flex-grow: 1; /* Allow the form to grow and fill available space */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Space out form elements evenly */
         }
 
         /* Responsive Design */
