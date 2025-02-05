@@ -100,14 +100,16 @@
             margin-bottom: 5px;
             font-weight: bold;
         }
+        /* Style for input fields and date picker */
         .event-form-container input,
         .event-form-container select {
-            width: 100%;
+            width: calc(100% - 24px); /* Subtract padding (12px left + 12px right) */
             padding: 12px; /* Larger padding for touch targets */
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            font-size: 0.8rem;
+            font-size: 1rem;
+            box-sizing: border-box; /* Ensures padding and border are included in the width */
         }
         .event-form-container button {
             display: block;
