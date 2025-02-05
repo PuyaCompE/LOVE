@@ -59,7 +59,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .week-view h2 {
-            font-size: 1.5rem;
+            font-size: 0.9rem;
             margin-bottom: 15px;
             color: #e74c3c;
         }
@@ -67,7 +67,7 @@
             margin-bottom: 20px;
         }
         .day-column h3 {
-            font-size: 1.2rem;
+            font-size: 0.6rem;
             margin-bottom: 10px;
             color: #333;
         }
@@ -253,42 +253,51 @@
                 const eventList = document.createElement('ul');
                 eventList.classList.add('event-list');
 
-                if (events[dateKey]) {
+                if (events[dateKey] && events[dateKey].length > 0) {
                     events[dateKey].forEach(event => {
                         const eventItem = document.createElement('li');
                         eventItem.textContent = event;
                         eventList.appendChild(eventItem);
                     });
-                } else {
-                    const noEvents = document.createElement('li');
-                    noEvents.textContent = 'No events';
-                    eventList.appendChild(noEvents);
+                    dayColumn.appendChild(eventList);
+                    weekDaysElement.appendChild(dayColumn); // Only append if there are events
                 }
 
                 dayColumn.appendChild(eventList);
                 weekDaysElement.appendChild(dayColumn);
             }
         }
-
+        function isDateInCurrentWeek(selectedDate) {
+            const today = new Date();
+            const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay())); // Sunday
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(endOfWeek.getDate() + 6); // Saturday
+            const selected = new Date(selectedDate);
+            return selected >= startOfWeek && selected <= endOfWeek;
+        }
         // Handle form submission
         document.getElementById('event-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const eventName = document.getElementById('event-name').value.trim();
             const eventDate = document.getElementById('event-date').value;
-
+        
             if (!eventName || !eventDate) {
                 alert('Please enter both event name and date.');
                 return;
             }
-
+        
+            const selectedDate = new Date(eventDate);
+            if (!isDateInCurrentWeek(selectedDate)) {
+                alert('The selected date is not in the current week.');
+                return;
+            }
+        
             const dateKey = eventDate;
             const eventDescription = events[dateKey] ? [...events[dateKey], eventName] : [eventName];
             events[dateKey] = eventDescription;
-
             await saveEvents(dateKey, eventDescription);
             document.getElementById('event-form').reset();
         });
-
         // Initialize
         fetchEvents();
     </script>
